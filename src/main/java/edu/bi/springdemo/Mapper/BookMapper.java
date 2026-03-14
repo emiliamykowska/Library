@@ -32,5 +32,3 @@ public class BookMapper {
         return book;
     }
 }
-
-

@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
@@ -23,13 +26,19 @@ public class ReviewController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody Review addReview(@RequestBody ReviewDTO reviewDTO){
-        Review review = reviewMapper.toEntity(reviewDTO);
-        return reviewService.save(review);
+    public @ResponseBody ReviewDTO addReview(@RequestBody ReviewDTO reviewDTO){
+        Review savedReview = reviewService.save(reviewDTO);
+        return reviewMapper.toDto(savedReview);
     }
 
     @GetMapping
-    public @ResponseBody Iterable<Review> getAllReviews(){
-        return reviewService.findAll();
+    public @ResponseBody Iterable<ReviewDTO> getAllReviews(){
+        List<ReviewDTO> result = new ArrayList<>();
+
+        for (Review review : reviewService.findAll()){
+            result.add(reviewMapper.toDto(review));
+        }
+
+        return result;
     }
 }

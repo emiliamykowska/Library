@@ -15,20 +15,8 @@ public class LoanMapper {
         loanDTO.setUserId(loan.getUser().getUserId());
         loanDTO.setLoanDate(loan.getLoanDate());
         loanDTO.setDueDate(loan.getDueDate());
-        loanDTO.setReturnDate(loanDTO.getReturnDate());
+        loanDTO.setReturnDate(loan.getReturnDate());
 
         return loanDTO;
-    }
-
-    public Loan toEntity(LoanDTO loanDTO) {
-        Loan loan = new Loan();
-
-        loan.setBook(loanDTO.getBookId());
-        loan.setUser(loanDTO.getUserId());
-        loan.setLoanDate(loanDTO.getLoanDate());
-        loan.setDueDate(loanDTO.getDueDate());
-        loan.setReturnDate(loanDTO.getReturnDate());
-
-        return loan;
     }
 }

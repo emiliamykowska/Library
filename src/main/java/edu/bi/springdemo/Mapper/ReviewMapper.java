@@ -20,16 +20,4 @@ public class ReviewMapper {
 
         return reviewDTO;
     }
-
-    public Review toEntity(ReviewDTO reviewDTO){
-        Review review = new Review();
-
-        review.setBook(reviewDTO.getBookId());
-        review.setUser(reviewDTO.getUserId());
-        review.setRating(reviewDTO.getRating());
-        review.setComment(reviewDTO.getComment());
-        review.setReviewDate(reviewDTO.getReviewDate());
-
-        return review;
-    }
 }

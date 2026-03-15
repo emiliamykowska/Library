@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/loans")
 public class LoanController {
@@ -22,14 +25,18 @@ public class LoanController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody Loan addLoan(@RequestBody LoanDTO loanDTO) {
-        Loan loan = loanMapper.toEntity(loanDTO);
-
-        return loanService.save(loan);
+    public @ResponseBody LoanDTO addLoan(@RequestBody LoanDTO loanDTO) {
+        Loan savedLoan = loanService.save(loanDTO);
+        return loanMapper.toDto(savedLoan);
     }
 
     @GetMapping
-    public @ResponseBody Iterable<Loan> getAllLoans(){
-        return loanService.findAll();
+    public @ResponseBody Iterable<LoanDTO> getAllLoans(){
+        List<LoanDTO> result = new ArrayList<>();
+
+        for (Loan loan : loanService.findAll()){
+            result.add(loanMapper.toDto(loan));
+        }
+        return result;
     }
 }

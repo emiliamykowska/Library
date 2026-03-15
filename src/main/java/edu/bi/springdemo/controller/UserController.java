@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -23,13 +26,20 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody User addUser(@RequestBody UserDTO userDTO){
+    public @ResponseBody UserDTO addUser(@RequestBody UserDTO userDTO){
         User user = userMapper.toEntity(userDTO);
-        return userService.save(user);
+        User savedUser = userService.save(user);
+        return userMapper.toDTO(savedUser);
     }
 
     @GetMapping
-    public @ResponseBody Iterable<User> getAllReviews(){
-        return userService.findAll();
+    public @ResponseBody Iterable<UserDTO> getAllReviews(){
+        List<UserDTO> result = new ArrayList<>();
+
+        for (User user : userService.findAll()) {
+            result.add(userMapper.toDTO(user));
+        }
+
+        return result;
     }
 }

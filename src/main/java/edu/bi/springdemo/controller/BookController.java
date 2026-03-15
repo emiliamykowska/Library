@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/books") //so every endpoint contains book at the beginning
 public class BookController {
@@ -40,14 +43,21 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED) //code 201 if POST succeeded
-    public @ResponseBody Book addBook(@RequestBody BookDTO bookDTO) {
+    public @ResponseBody BookDTO addBook(@RequestBody BookDTO bookDTO) {
         Book book = bookMapper.toEntity(bookDTO);
-        return bookService.save(book);
+        Book savedBook = bookService.save(book);
 
+        return bookMapper.toDto(savedBook);
     }
 
     @GetMapping
-    public @ResponseBody Iterable<Book> getAllBooks() {
-        return bookService.findAll();
+    public @ResponseBody Iterable<BookDTO> getAllBooks() {
+        List<BookDTO> result = new ArrayList<>();
+
+        for (Book book : bookService.findAll()){
+            result.add(bookMapper.toDto(book));
+        }
+
+        return result;
     }
 }

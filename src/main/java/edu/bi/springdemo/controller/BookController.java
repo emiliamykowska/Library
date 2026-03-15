@@ -4,7 +4,6 @@ import edu.bi.springdemo.DTO.BookDTO;
 import edu.bi.springdemo.Mapper.BookMapper;
 import edu.bi.springdemo.Service.BookService;
 import edu.bi.springdemo.entity.Book;
-import edu.bi.springdemo.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

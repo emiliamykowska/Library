@@ -11,7 +11,7 @@ public class UserMapper {
         UserDTO userDTO = new UserDTO();
 
         userDTO.setUsername(user.getUsername());
-//        userDTO.setPassword(user.getPassword()); //comment to not show password to the user
+        userDTO.setPassword(user.getPassword());
         userDTO.setRole(user.getRole());
         userDTO.setEmail(user.getEmail());
         userDTO.setName(user.getName());

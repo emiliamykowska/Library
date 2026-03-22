@@ -1,10 +1,13 @@
 package edu.bi.springdemo.DTO;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.bi.springdemo.enums.UserRole;
 
 public class UserDTO {
     private String username;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private UserRole role;
     private String email;

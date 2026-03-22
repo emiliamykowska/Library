@@ -41,6 +41,7 @@ public class JWTTokenFilter extends OncePerRequestFilter {
 
             }
             catch (Exception e){
+                System.out.println("JWT parsing failed: " + e.getMessage());
                 SecurityContextHolder.getContext().setAuthentication(null);
             }
         }

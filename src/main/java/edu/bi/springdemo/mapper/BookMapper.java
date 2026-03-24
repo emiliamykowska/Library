@@ -1,4 +1,4 @@
-package edu.bi.springdemo.Mapper;
+package edu.bi.springdemo.mapper;
 
 import edu.bi.springdemo.DTO.BookDTO;
 import edu.bi.springdemo.entity.Book;

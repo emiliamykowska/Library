@@ -1,4 +1,4 @@
-package edu.bi.springdemo.Service;
+package edu.bi.springdemo.service;
 
 import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.repository.UserRepository;

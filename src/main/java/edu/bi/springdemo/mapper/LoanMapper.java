@@ -1,10 +1,8 @@
-package edu.bi.springdemo.Mapper;
+package edu.bi.springdemo.mapper;
 
 import edu.bi.springdemo.DTO.LoanDTO;
 import edu.bi.springdemo.entity.Loan;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Component
 public class LoanMapper {

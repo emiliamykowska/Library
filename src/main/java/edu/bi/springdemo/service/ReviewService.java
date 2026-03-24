@@ -1,4 +1,4 @@
-package edu.bi.springdemo.Service;
+package edu.bi.springdemo.service;
 
 import edu.bi.springdemo.DTO.ReviewDTO;
 import edu.bi.springdemo.entity.Book;

@@ -1,8 +1,8 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.UserDTO;
-import edu.bi.springdemo.Mapper.UserMapper;
-import edu.bi.springdemo.Service.UserService;
+import edu.bi.springdemo.mapper.UserMapper;
+import edu.bi.springdemo.service.UserService;
 import edu.bi.springdemo.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

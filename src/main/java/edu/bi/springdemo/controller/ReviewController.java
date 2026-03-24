@@ -1,8 +1,8 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.ReviewDTO;
-import edu.bi.springdemo.Mapper.ReviewMapper;
-import edu.bi.springdemo.Service.ReviewService;
+import edu.bi.springdemo.mapper.ReviewMapper;
+import edu.bi.springdemo.service.ReviewService;
 import edu.bi.springdemo.entity.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

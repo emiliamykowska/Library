@@ -1,8 +1,8 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.BookDTO;
-import edu.bi.springdemo.Mapper.BookMapper;
-import edu.bi.springdemo.Service.BookService;
+import edu.bi.springdemo.mapper.BookMapper;
+import edu.bi.springdemo.service.BookService;
 import edu.bi.springdemo.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

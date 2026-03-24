@@ -1,8 +1,8 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.LoanDTO;
-import edu.bi.springdemo.Mapper.LoanMapper;
-import edu.bi.springdemo.Service.LoanService;
+import edu.bi.springdemo.mapper.LoanMapper;
+import edu.bi.springdemo.service.LoanService;
 import edu.bi.springdemo.entity.Loan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

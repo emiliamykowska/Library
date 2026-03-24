@@ -7,6 +7,7 @@ import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.repository.BookRepository;
 import edu.bi.springdemo.repository.ReviewRepository;
 import edu.bi.springdemo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class ReviewService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Review save(ReviewDTO reviewDTO){
         Book book = bookRepository.findById(reviewDTO.getBookId()).orElseThrow(() -> new RuntimeException("Book not found"));
         User user = userRepository.findById(reviewDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));

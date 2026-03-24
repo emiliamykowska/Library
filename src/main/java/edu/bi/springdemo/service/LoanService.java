@@ -7,6 +7,7 @@ import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.repository.BookRepository;
 import edu.bi.springdemo.repository.LoanRepository;
 import edu.bi.springdemo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class LoanService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Loan save(LoanDTO loanDTO){
         Book book = bookRepository.findById(loanDTO.getBookId()).orElseThrow(() -> new RuntimeException("Book not found"));
         User user = userRepository.findById(loanDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));

@@ -2,6 +2,7 @@ package edu.bi.springdemo.service;
 
 import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional //use annotation from spring, it's a transaction
     public User save(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);

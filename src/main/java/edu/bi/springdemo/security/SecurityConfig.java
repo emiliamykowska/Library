@@ -11,22 +11,48 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+// ---JWT---
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfig {
+//
+//    private final JWTTokenService jwtTokenService;
+//
+//    @Autowired
+//    public SecurityConfig(JWTTokenService jwtTokenService){
+//        this.jwtTokenService = jwtTokenService;
+//    }
+//
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        return http.csrf(AbstractHttpConfigurer::disable)
+//                .cors(AbstractHttpConfigurer::disable)
+//                .addFilterBefore(new JWTTokenFilter(jwtTokenService), UsernamePasswordAuthenticationFilter.class)
+//                .authorizeHttpRequests(
+//                        authorizationManagerRequestMatcherRegistry ->
+//                                authorizationManagerRequestMatcherRegistry
+//                                        .requestMatchers("/login").permitAll()
+//                                        .requestMatchers(HttpMethod.GET, "/books").hasAnyRole("READER", "LIBRARIAN")
+//                                        .requestMatchers("/reviews").hasAnyRole("READER", "LIBRARIAN")
+//                                        .requestMatchers("/**").hasRole("LIBRARIAN")
+//                ).sessionManagement(httpSecuritySessionManagementConfigurer ->
+//                        httpSecuritySessionManagementConfigurer
+//                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .build();
+//    }
+//}
+
+// ---SESSION---
+
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
-
-    private final JWTTokenService jwtTokenService;
-
-    @Autowired
-    public SecurityConfig(JWTTokenService jwtTokenService){
-        this.jwtTokenService = jwtTokenService;
-    }
+public class SecurityConfig{
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JWTTokenFilter(jwtTokenService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry ->
                                 authorizationManagerRequestMatcherRegistry
@@ -34,9 +60,10 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.GET, "/books").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers("/reviews").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers("/**").hasRole("LIBRARIAN")
-                ).sessionManagement(httpSecuritySessionManagementConfigurer ->
+                )
+                .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) //changed from stateless, so session can store state
                 .build();
     }
 }

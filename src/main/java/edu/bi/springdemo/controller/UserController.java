@@ -6,6 +6,7 @@ import edu.bi.springdemo.service.UserService;
 import edu.bi.springdemo.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody UserDTO addUser(@RequestBody UserDTO userDTO){
+    public @ResponseBody UserDTO addUser(@Validated @RequestBody UserDTO userDTO){
         User user = userMapper.toEntity(userDTO);
         User savedUser = userService.save(user);
         return userMapper.toDTO(savedUser);

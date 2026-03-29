@@ -1,11 +1,22 @@
 package edu.bi.springdemo.DTO;
 import java.time.LocalDate;
+import jakarta.validation.constraints.*;
 
 public class ReviewDTO {
+
+    @NotNull
     private Integer bookId;
+
+    @NotNull
     private Integer userId;
+
+    @NotNull
     private Integer rating;
+
+    @NotBlank
     private String comment;
+
+    @NotNull
     private LocalDate reviewDate;
 
     public Integer getBookId() {

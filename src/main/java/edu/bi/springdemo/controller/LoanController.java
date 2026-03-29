@@ -6,6 +6,7 @@ import edu.bi.springdemo.service.LoanService;
 import edu.bi.springdemo.entity.Loan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class LoanController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody LoanDTO addLoan(@RequestBody LoanDTO loanDTO) {
+    public @ResponseBody LoanDTO addLoan(@Validated @RequestBody LoanDTO loanDTO) {
         Loan savedLoan = loanService.save(loanDTO);
         return loanMapper.toDto(savedLoan);
     }

@@ -1,12 +1,23 @@
 package edu.bi.springdemo.DTO;
 
 import java.time.LocalDate;
+import jakarta.validation.constraints.*;
 
 public class LoanDTO {
+
+    @NotNull
     private Integer bookId;
+
+    @NotNull
     private Integer userId;
+
+    @NotNull
     private LocalDate loanDate;
+
+    @NotNull
     private LocalDate dueDate;
+
+    @NotNull
     private LocalDate returnDate;
 
     public Integer getBookId() {

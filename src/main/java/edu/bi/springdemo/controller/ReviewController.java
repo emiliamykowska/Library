@@ -6,6 +6,7 @@ import edu.bi.springdemo.service.ReviewService;
 import edu.bi.springdemo.entity.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ReviewController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody ReviewDTO addReview(@RequestBody ReviewDTO reviewDTO){
+    public @ResponseBody ReviewDTO addReview(@Validated @RequestBody ReviewDTO reviewDTO){
         Review savedReview = reviewService.save(reviewDTO);
         return reviewMapper.toDto(savedReview);
     }

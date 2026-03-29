@@ -6,6 +6,7 @@ import edu.bi.springdemo.service.BookService;
 import edu.bi.springdemo.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED) //code 201 if POST succeeded
-    public @ResponseBody BookDTO addBook(@RequestBody BookDTO bookDTO) {
+    public @ResponseBody BookDTO addBook(@Validated @RequestBody BookDTO bookDTO) {
         Book book = bookMapper.toEntity(bookDTO);
         Book savedBook = bookService.save(book);
 

@@ -4,6 +4,8 @@ import edu.bi.springdemo.DTO.LoanDTO;
 import edu.bi.springdemo.entity.Book;
 import edu.bi.springdemo.entity.Loan;
 import edu.bi.springdemo.entity.User;
+import edu.bi.springdemo.exception.NotValidArgumentException;
+import edu.bi.springdemo.exception.ResourceNotFoundException;
 import edu.bi.springdemo.repository.BookRepository;
 import edu.bi.springdemo.repository.LoanRepository;
 import edu.bi.springdemo.repository.UserRepository;
@@ -25,8 +27,16 @@ public class LoanService {
 
     @Transactional
     public Loan save(LoanDTO loanDTO){
-        Book book = bookRepository.findById(loanDTO.getBookId()).orElseThrow(() -> new RuntimeException("Book not found"));
-        User user = userRepository.findById(loanDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        if (loanDTO.getDueDate().isBefore(loanDTO.getLoanDate())) {
+            throw NotValidArgumentException.create("Due date cannot be before loan date");
+        }
+
+        if (loanDTO.getReturnDate().isBefore(loanDTO.getLoanDate())) {
+            throw NotValidArgumentException.create("Return date cannot be before loan date");
+        }
+
+        Book book = bookRepository.findById(loanDTO.getBookId()).orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
+        User user = userRepository.findById(loanDTO.getUserId()).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
 
         Loan loan = new Loan();
 

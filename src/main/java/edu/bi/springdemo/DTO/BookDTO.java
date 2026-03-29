@@ -1,12 +1,24 @@
 package edu.bi.springdemo.DTO;
-
+import jakarta.validation.constraints.*;
 
 public class BookDTO { //api request data, without relationships, id etc.
+
+    @NotBlank
     private String isbn;
+
+    @NotBlank
     private String title;
+
+    @NotBlank
     private String author;
+
+    @NotBlank
     private String publisher;
+
+    @NotNull
     private Long year;
+
+    @NotNull
     private Long availableCopies;
 
     public String getIsbn() {

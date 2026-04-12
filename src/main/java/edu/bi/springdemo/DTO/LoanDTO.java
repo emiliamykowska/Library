@@ -17,7 +17,6 @@ public class LoanDTO {
     @NotNull
     private LocalDate dueDate;
 
-    @NotNull
     private LocalDate returnDate;
 
     public Integer getBookId() {

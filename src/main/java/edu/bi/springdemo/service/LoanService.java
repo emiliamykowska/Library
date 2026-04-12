@@ -12,6 +12,8 @@ import edu.bi.springdemo.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class LoanService {
 
@@ -25,26 +27,78 @@ public class LoanService {
         this.userRepository = userRepository;
     }
 
+//    @Transactional
+//    public Loan save(LoanDTO loanDTO){
+//        if (loanDTO.getDueDate().isBefore(loanDTO.getLoanDate())) {
+//            throw NotValidArgumentException.create("Due date cannot be before loan date");
+//        }
+//
+//        if (loanDTO.getReturnDate().isBefore(loanDTO.getLoanDate())) {
+//            throw NotValidArgumentException.create("Return date cannot be before loan date");
+//        }
+//
+//        Book book = bookRepository.findById(loanDTO.getBookId()).orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
+//        User user = userRepository.findById(loanDTO.getUserId()).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+//
+//        Loan loan = new Loan();
+//
+//        loan.setBook(book);
+//        loan.setUser(user);
+//        loan.setLoanDate(loanDTO.getLoanDate());
+//        loan.setDueDate(loanDTO.getDueDate());
+//        loan.setReturnDate(loanDTO.getReturnDate());
+//
+//        return loanRepository.save(loan);
+//    }
+
     @Transactional
-    public Loan save(LoanDTO loanDTO){
+    public Loan borrowBook(LoanDTO loanDTO){
         if (loanDTO.getDueDate().isBefore(loanDTO.getLoanDate())) {
             throw NotValidArgumentException.create("Due date cannot be before loan date");
         }
 
-        if (loanDTO.getReturnDate().isBefore(loanDTO.getLoanDate())) {
-            throw NotValidArgumentException.create("Return date cannot be before loan date");
+        Book book = bookRepository.findById(loanDTO.getBookId())
+                .orElseThrow(() -> ResourceNotFoundException.create("Book with that id was not found"));
+
+        User user = userRepository.findById(loanDTO.getUserId())
+                .orElseThrow(() -> ResourceNotFoundException.create("User with that id was not found"));
+
+        if (book.getAvailableCopies() <= 0){
+            throw NotValidArgumentException.create("No available copies");
         }
 
-        Book book = bookRepository.findById(loanDTO.getBookId()).orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
-        User user = userRepository.findById(loanDTO.getUserId()).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
 
         Loan loan = new Loan();
-
         loan.setBook(book);
         loan.setUser(user);
         loan.setLoanDate(loanDTO.getLoanDate());
         loan.setDueDate(loanDTO.getDueDate());
+
+        return loanRepository.save(loan);
+    }
+
+    @Transactional
+    public Loan returnBook(Integer loanId, LoanDTO loanDTO){
+        if (loanDTO.getReturnDate() == null) {
+            throw NotValidArgumentException.create("Return date required");
+        }
+
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> ResourceNotFoundException.create("Loan with that id was not found"));
+
+        if (loan.getReturnDate() != null){
+            throw NotValidArgumentException.create("Book already returned");
+        }
+
+        if (loanDTO.getReturnDate().isBefore(loan.getLoanDate())) {
+            throw NotValidArgumentException.create("Return date cannot be before loan date");
+        }
+
         loan.setReturnDate(loanDTO.getReturnDate());
+
+        Book book = loan.getBook();
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
 
         return loanRepository.save(loan);
     }

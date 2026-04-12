@@ -61,4 +61,15 @@ public class BookController {
 
         return result;
     }
+
+    @PatchMapping("/{id}")
+    public BookDTO updateBook(@PathVariable Integer id, @RequestBody BookDTO bookDTO){
+        return bookMapper.toDto(bookService.update(id, bookDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteBook(@PathVariable Integer id){
+        bookService.delete(id);
+    }
 }

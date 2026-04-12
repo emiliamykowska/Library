@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping
-    public @ResponseBody Iterable<UserDTO> getAllReviews(){
+    public @ResponseBody Iterable<UserDTO> getAllUsers(){
         List<UserDTO> result = new ArrayList<>();
 
         for (User user : userService.findAll()) {
@@ -42,5 +42,16 @@ public class UserController {
         }
 
         return result;
+    }
+
+    @PatchMapping("/{id}")
+    public UserDTO updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO){
+        return userMapper.toDTO(userService.update(id, userDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Integer id){
+        userService.delete(id);
     }
 }

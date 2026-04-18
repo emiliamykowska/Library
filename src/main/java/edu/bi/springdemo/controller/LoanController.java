@@ -65,7 +65,13 @@ public class LoanController {
     public List<LoanDTO> getMyLoans() {
         List<LoanDTO> result = new ArrayList<>();
 
-        for (Loan loan : loanService.getLoansForCurrentUser()){
+        List<Loan> userLoans = loanService.getLoansForCurrentUser();
+
+        if(userLoans.isEmpty()){
+            throw ResourceNotFoundException.create("You haven't loaned any books yet");
+        }
+
+        for (Loan loan : userLoans){
             result.add(loanMapper.toDto(loan));
         }
         return result;

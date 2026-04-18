@@ -119,13 +119,6 @@ public class LoanService {
 
     @Transactional
     public Loan returnBook(Integer loanId, LoanDTO loanDTO){
-        if (loanDTO.getReturnDate() == null) {
-            throw NotValidArgumentException.create("Return date required");
-        }
-
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> ResourceNotFoundException.create("Loan with that id was not found"));
-
         String username = Objects.requireNonNull(
                 SecurityContextHolder.getContext().getAuthentication()
         ).getName();
@@ -133,7 +126,18 @@ public class LoanService {
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> ResourceNotFoundException.create("User not found"));
 
-        if (currentUser.getRole().equals(UserRole.READER) && !loan.getUser().getUserId().equals(currentUser.getUserId())) {
+        UserRole currentRole = currentUser.getRole();
+
+        if (currentRole.equals(UserRole.READER) || loanDTO.getReturnDate() == null){
+            loanDTO.setReturnDate(LocalDate.now());
+
+        }
+
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> ResourceNotFoundException.create("Loan with that id was not found"));
+
+
+        if (currentRole.equals(UserRole.READER) && !loan.getUser().getUserId().equals(currentUser.getUserId())) {
             throw NotValidArgumentException.create("You are not allowed to return somebody else's loan");
         }
 

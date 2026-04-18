@@ -1,5 +1,6 @@
 package edu.bi.springdemo.controller;
 
+import edu.bi.springdemo.DTO.LoanDTO;
 import edu.bi.springdemo.DTO.ReviewDTO;
 import edu.bi.springdemo.mapper.ReviewMapper;
 import edu.bi.springdemo.service.ReviewService;
@@ -28,9 +29,17 @@ public class ReviewController {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public @ResponseBody ReviewDTO addReview(@Validated @RequestBody ReviewDTO reviewDTO){
-        Review savedReview = reviewService.save(reviewDTO);
+        Review savedReview = reviewService.addReview(reviewDTO);
         return reviewMapper.toDto(savedReview);
     }
+
+    @PostMapping("/{userId}")
+    public ReviewDTO addAsLibrarian(@PathVariable Integer userId,
+                                     @Validated @RequestBody ReviewDTO reviewDTO) {
+        reviewDTO.setUserId(userId);
+        return reviewMapper.toDto(reviewService.addReviewAsLibrarian(reviewDTO));
+    }
+
 
     @GetMapping
     public @ResponseBody Iterable<ReviewDTO> getAllReviews(){

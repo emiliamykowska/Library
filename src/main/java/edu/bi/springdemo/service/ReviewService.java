@@ -10,7 +10,10 @@ import edu.bi.springdemo.repository.BookRepository;
 import edu.bi.springdemo.repository.ReviewRepository;
 import edu.bi.springdemo.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class ReviewService {
@@ -26,9 +29,41 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review save(ReviewDTO reviewDTO){
+    public Review addReviewAsLibrarian(ReviewDTO reviewDTO){
         Book book = bookRepository.findById(reviewDTO.getBookId()).orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
         User user = userRepository.findById(reviewDTO.getUserId()).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+
+        if (reviewRepository.findByUserIdAndBookId(user.getUserId(), book.getBookId()).isPresent()) {
+            throw NotValidArgumentException.create("User already reviewed this book");
+        }
+
+        Integer rating = reviewDTO.getRating();
+
+        if (rating > 10 || rating < 0){
+            throw NotValidArgumentException.create("Rating has to be an integer between 0 and 10");
+        }
+        Review review = new Review();
+        review.setBook(book);
+        review.setUser(user);
+        review.setRating(reviewDTO.getRating());
+        review.setComment(reviewDTO.getComment());
+        review.setReviewDate(reviewDTO.getReviewDate());
+
+        return reviewRepository.save(review);
+    }
+
+    @Transactional
+    public Review addReview(ReviewDTO reviewDTO){
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext()
+                        .getAuthentication())
+                .getName();
+
+        Book book = bookRepository.findById(reviewDTO.getBookId()).orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+
+        if (reviewRepository.findByUserIdAndBookId(user.getUserId(), book.getBookId()).isPresent()) {
+            throw NotValidArgumentException.create("User already reviewed this book");
+        }
 
         Integer rating = reviewDTO.getRating();
 

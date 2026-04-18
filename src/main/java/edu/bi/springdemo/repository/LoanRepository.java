@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface LoanRepository extends CrudRepository<Loan, Integer> {
-    List<Loan> findByUserId(Integer userId);
+    List<Loan> findByUserUserId(Integer userId);
 }

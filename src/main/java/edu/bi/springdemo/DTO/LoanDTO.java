@@ -10,10 +10,8 @@ public class LoanDTO {
 
     private Integer userId;
 
-    @NotNull
     private LocalDate loanDate;
 
-    @NotNull
     private LocalDate dueDate;
 
     private LocalDate returnDate;

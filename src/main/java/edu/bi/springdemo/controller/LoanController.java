@@ -1,6 +1,7 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.LoanDTO;
+import edu.bi.springdemo.exception.ResourceNotFoundException;
 import edu.bi.springdemo.mapper.LoanMapper;
 import edu.bi.springdemo.service.LoanService;
 import edu.bi.springdemo.entity.Loan;
@@ -45,9 +46,9 @@ public class LoanController {
         return loanMapper.toDto(loanService.borrowBookAsLibrarian(loanDTO));
     }
 
-    @PatchMapping("/{id}/return")
-    public LoanDTO returnBook(@PathVariable Integer id, @RequestBody LoanDTO loanDTO){
-        return loanMapper.toDto(loanService.returnBook(id, loanDTO));
+    @PatchMapping("/return/{loanId}")
+    public LoanDTO returnBook(@PathVariable Integer loanId, @RequestBody LoanDTO loanDTO){
+        return loanMapper.toDto(loanService.returnBook(loanId, loanDTO));
     }
 
     @GetMapping
@@ -74,7 +75,13 @@ public class LoanController {
     public List<LoanDTO> getLoansByUser(@PathVariable Integer userId) {
         List<LoanDTO> result = new ArrayList<>();
 
-        for (Loan loan : loanService.getLoansByUserId(userId)){
+        List<Loan> usersLoans = loanService.getLoansByUserId(userId);
+
+        if (usersLoans.isEmpty()){
+            throw ResourceNotFoundException.create("This user did not loan any books");
+        }
+
+        for (Loan loan : usersLoans){
             result.add(loanMapper.toDto(loan));
         }
         return result;

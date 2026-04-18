@@ -4,6 +4,7 @@ import edu.bi.springdemo.DTO.LoanDTO;
 import edu.bi.springdemo.entity.Book;
 import edu.bi.springdemo.entity.Loan;
 import edu.bi.springdemo.entity.User;
+import edu.bi.springdemo.enums.UserRole;
 import edu.bi.springdemo.exception.NotValidArgumentException;
 import edu.bi.springdemo.exception.ResourceNotFoundException;
 import edu.bi.springdemo.repository.BookRepository;
@@ -56,7 +57,11 @@ public class LoanService {
 
     @Transactional
     public Loan borrowBookAsLibrarian(LoanDTO loanDTO){
-        if (loanDTO.getDueDate().isBefore(loanDTO.getLoanDate())) {
+        LocalDate loanDate = loanDTO.getLoanDate() != null ? loanDTO.getLoanDate() : LocalDate.now();
+
+        LocalDate dueDate = loanDTO.getDueDate() != null ? loanDTO.getDueDate() : loanDate.plusDays(30);
+
+        if (dueDate.isBefore(loanDate)) {
             throw NotValidArgumentException.create("Due date cannot be before loan date");
         }
 
@@ -100,11 +105,14 @@ public class LoanService {
 
         book.setAvailableCopies(book.getAvailableCopies() - 1);
 
+        LocalDate loanDate = LocalDate.now();
+        LocalDate dueDate = loanDate.plusDays(30);
+
         Loan loan = new Loan();
         loan.setBook(book);
         loan.setUser(user);
-        loan.setLoanDate(loanDTO.getLoanDate());
-        loan.setDueDate(loanDTO.getDueDate());
+        loan.setLoanDate(loanDate);
+        loan.setDueDate(dueDate);
 
         return loanRepository.save(loan);
     }
@@ -117,6 +125,17 @@ public class LoanService {
 
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> ResourceNotFoundException.create("Loan with that id was not found"));
+
+        String username = Objects.requireNonNull(
+                SecurityContextHolder.getContext().getAuthentication()
+        ).getName();
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+
+        if (currentUser.getRole().equals(UserRole.READER) && !loan.getUser().getUserId().equals(currentUser.getUserId())) {
+            throw NotValidArgumentException.create("You are not allowed to return somebody else's loan");
+        }
 
         if (loan.getReturnDate() != null){
             throw NotValidArgumentException.create("Book already returned");
@@ -146,10 +165,12 @@ public class LoanService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> ResourceNotFoundException.create("User not found"));
 
-        return loanRepository.findByUserId(user.getUserId());
+        return loanRepository.findByUserUserId(user.getUserId());
     }
 
     public List<Loan> getLoansByUserId(Integer userId) {
-        return loanRepository.findByUserId(userId);
+        userRepository.findById(userId).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+
+        return loanRepository.findByUserUserId(userId);
     }
 }

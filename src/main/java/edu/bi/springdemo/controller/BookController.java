@@ -1,6 +1,7 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.BookDTO;
+import edu.bi.springdemo.exception.ResourceNotFoundException;
 import edu.bi.springdemo.mapper.BookMapper;
 import edu.bi.springdemo.service.BookService;
 import edu.bi.springdemo.entity.Book;
@@ -56,6 +57,23 @@ public class BookController {
         List<BookDTO> result = new ArrayList<>();
 
         for (Book book : bookService.findAll()){
+            result.add(bookMapper.toDto(book));
+        }
+
+        return result;
+    }
+
+    @GetMapping("/search")
+    public List<BookDTO> search(@RequestParam String title){
+        List<BookDTO> result = new ArrayList<>();
+
+        List<Book> found = bookService.findBook(title);
+
+        if (found.isEmpty()){
+            throw ResourceNotFoundException.create("There is no book with that title");
+        }
+
+        for (Book book : found){
             result.add(bookMapper.toDto(book));
         }
 

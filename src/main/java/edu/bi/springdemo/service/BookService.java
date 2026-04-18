@@ -8,6 +8,8 @@ import edu.bi.springdemo.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookService {
 
@@ -34,6 +36,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
+    @Transactional
     public Book update(Integer id, BookDTO bookDTO){
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> ResourceNotFoundException.create("Book with that id was not found"));
@@ -76,5 +79,9 @@ public class BookService {
             throw ResourceNotFoundException.create("Book with that id was not found");
         }
         bookRepository.deleteById(id);
+    }
+
+    public List<Book> findBook(String title){
+        return bookRepository.findByTitleContainingIgnoreCase(title);
     }
 }

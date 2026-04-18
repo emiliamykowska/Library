@@ -5,6 +5,7 @@ import edu.bi.springdemo.exception.DuplicatedDataException;
 import edu.bi.springdemo.exception.LoginPasswordException;
 import edu.bi.springdemo.exception.NotValidArgumentException;
 import edu.bi.springdemo.exception.ResourceNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,6 +73,15 @@ public class GlobalExceptionController {
     public Map<String, String> handleDuplicatedDataException(DuplicatedDataException e){
         Map<String, String> map = new HashMap<>();
         map.put("message", e.getMessage());
+        map.put("timestamp", new Date().toString());
+        return map;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "Duplicate or invalid data: " + e.getMostSpecificCause().getMessage());
         map.put("timestamp", new Date().toString());
         return map;
     }

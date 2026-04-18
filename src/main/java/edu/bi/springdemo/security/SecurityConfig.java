@@ -35,6 +35,8 @@ public class SecurityConfig {
                                 authorizationManagerRequestMatcherRegistry
                                         .requestMatchers("/login").permitAll()
                                         .requestMatchers(HttpMethod.GET, "/books").hasAnyRole("READER", "LIBRARIAN")
+                                        .requestMatchers(HttpMethod.GET, "/books/search").hasAnyRole("READER", "LIBRARIAN")
+                                        .requestMatchers(HttpMethod.GET, "/reviews").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers(HttpMethod.POST, "/reviews/*").hasRole("LIBRARIAN")
                                         .requestMatchers(HttpMethod.POST, "/reviews").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers(HttpMethod.PATCH, "/reviews/**").hasRole("LIBRARIAN")
@@ -42,6 +44,7 @@ public class SecurityConfig {
                                         .requestMatchers("/loans/my").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers("/loans/borrow/*").hasRole("LIBRARIAN")
                                         .requestMatchers("/loans/borrow").hasAnyRole("READER", "LIBRARIAN")
+                                        .requestMatchers("/loans/return/*").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers("/**").hasRole("LIBRARIAN")
                 )
                 .exceptionHandling(e ->

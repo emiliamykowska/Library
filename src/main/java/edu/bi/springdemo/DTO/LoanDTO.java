@@ -8,7 +8,6 @@ public class LoanDTO {
     @NotNull
     private Integer bookId;
 
-    @NotNull
     private Integer userId;
 
     @NotNull

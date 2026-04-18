@@ -10,9 +10,12 @@ import edu.bi.springdemo.repository.BookRepository;
 import edu.bi.springdemo.repository.LoanRepository;
 import edu.bi.springdemo.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LoanService {
@@ -52,7 +55,7 @@ public class LoanService {
 //    }
 
     @Transactional
-    public Loan borrowBook(LoanDTO loanDTO){
+    public Loan borrowBookAsLibrarian(LoanDTO loanDTO){
         if (loanDTO.getDueDate().isBefore(loanDTO.getLoanDate())) {
             throw NotValidArgumentException.create("Due date cannot be before loan date");
         }
@@ -64,6 +67,34 @@ public class LoanService {
                 .orElseThrow(() -> ResourceNotFoundException.create("User with that id was not found"));
 
         if (book.getAvailableCopies() <= 0){
+            throw NotValidArgumentException.create("No available copies");
+        }
+
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
+
+        Loan loan = new Loan();
+        loan.setBook(book);
+        loan.setUser(user);
+        loan.setLoanDate(loanDTO.getLoanDate());
+        loan.setDueDate(loanDTO.getDueDate());
+
+        return loanRepository.save(loan);
+    }
+
+    @Transactional
+    public Loan borrowBook(LoanDTO loanDTO) {
+
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext()
+                        .getAuthentication())
+                .getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+
+        Book book = bookRepository.findById(loanDTO.getBookId())
+                .orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
+
+        if (book.getAvailableCopies() <= 0) {
             throw NotValidArgumentException.create("No available copies");
         }
 
@@ -105,5 +136,20 @@ public class LoanService {
 
     public Iterable<Loan> findAll(){
         return loanRepository.findAll();
+    }
+
+    public List<Loan> getLoansForCurrentUser() {
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext()
+                        .getAuthentication())
+                .getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> ResourceNotFoundException.create("User not found"));
+
+        return loanRepository.findByUserId(user.getUserId());
+    }
+
+    public List<Loan> getLoansByUserId(Integer userId) {
+        return loanRepository.findByUserId(userId);
     }
 }

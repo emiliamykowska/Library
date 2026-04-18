@@ -38,6 +38,13 @@ public class LoanController {
         return loanMapper.toDto(loanService.borrowBook(loanDTO));
     }
 
+    @PostMapping("/borrow/{userId}")
+    public LoanDTO borrowAsLibrarian(@PathVariable Integer userId,
+                                     @Validated @RequestBody LoanDTO loanDTO) {
+        loanDTO.setUserId(userId);
+        return loanMapper.toDto(loanService.borrowBookAsLibrarian(loanDTO));
+    }
+
     @PatchMapping("/{id}/return")
     public LoanDTO returnBook(@PathVariable Integer id, @RequestBody LoanDTO loanDTO){
         return loanMapper.toDto(loanService.returnBook(id, loanDTO));
@@ -48,6 +55,26 @@ public class LoanController {
         List<LoanDTO> result = new ArrayList<>();
 
         for (Loan loan : loanService.findAll()){
+            result.add(loanMapper.toDto(loan));
+        }
+        return result;
+    }
+
+    @GetMapping("/my")
+    public List<LoanDTO> getMyLoans() {
+        List<LoanDTO> result = new ArrayList<>();
+
+        for (Loan loan : loanService.getLoansForCurrentUser()){
+            result.add(loanMapper.toDto(loan));
+        }
+        return result;
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<LoanDTO> getLoansByUser(@PathVariable Integer userId) {
+        List<LoanDTO> result = new ArrayList<>();
+
+        for (Loan loan : loanService.getLoansByUserId(userId)){
             result.add(loanMapper.toDto(loan));
         }
         return result;

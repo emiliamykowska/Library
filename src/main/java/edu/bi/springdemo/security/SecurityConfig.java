@@ -35,8 +35,10 @@ public class SecurityConfig {
                                 authorizationManagerRequestMatcherRegistry
                                         .requestMatchers("/login").permitAll()
                                         .requestMatchers(HttpMethod.GET, "/books").hasAnyRole("READER", "LIBRARIAN")
-                                        .requestMatchers("/reviews/*").hasRole("LIBRARIAN")
-                                        .requestMatchers("/reviews").hasAnyRole("READER", "LIBRARIAN")
+                                        .requestMatchers(HttpMethod.POST, "/reviews/*").hasRole("LIBRARIAN")
+                                        .requestMatchers(HttpMethod.POST, "/reviews").hasAnyRole("READER", "LIBRARIAN")
+                                        .requestMatchers(HttpMethod.PATCH, "/reviews/**").hasRole("LIBRARIAN")
+                                        .requestMatchers(HttpMethod.DELETE, "/reviews/**").hasRole("LIBRARIAN")
                                         .requestMatchers("/loans/my").hasAnyRole("READER", "LIBRARIAN")
                                         .requestMatchers("/loans/borrow/*").hasRole("LIBRARIAN")
                                         .requestMatchers("/loans/borrow").hasAnyRole("READER", "LIBRARIAN")

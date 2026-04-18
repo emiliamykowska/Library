@@ -7,7 +7,6 @@ public class ReviewDTO {
     @NotNull
     private Integer bookId;
 
-    @NotNull
     private Integer userId;
 
     @NotNull
@@ -16,7 +15,6 @@ public class ReviewDTO {
     @NotBlank
     private String comment;
 
-    @NotNull
     private LocalDate reviewDate;
 
     public Integer getBookId() {

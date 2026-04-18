@@ -1,6 +1,5 @@
 package edu.bi.springdemo.controller;
 
-import edu.bi.springdemo.DTO.LoanDTO;
 import edu.bi.springdemo.DTO.ReviewDTO;
 import edu.bi.springdemo.mapper.ReviewMapper;
 import edu.bi.springdemo.service.ReviewService;
@@ -42,13 +41,33 @@ public class ReviewController {
 
 
     @GetMapping
-    public @ResponseBody Iterable<ReviewDTO> getAllReviews(){
+    public Iterable<ReviewDTO> getReviews(@RequestParam(required = false) String title){
         List<ReviewDTO> result = new ArrayList<>();
 
-        for (Review review : reviewService.findAll()){
+        Iterable<Review> reviews;
+
+        if (title != null) {
+            reviews = reviewService.findBookReviews(title);
+        } else {
+            reviews = reviewService.findAll();
+        }
+
+        for (Review review : reviews){
             result.add(reviewMapper.toDto(review));
         }
 
         return result;
+    }
+
+    @PatchMapping("/{id}")
+    public ReviewDTO updateReview(@PathVariable Integer id, @RequestBody ReviewDTO reviewDTO){
+        return reviewMapper.toDto(reviewService.update(id, reviewDTO));
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteReview(@PathVariable Integer id){
+        reviewService.delete(id);
     }
 }

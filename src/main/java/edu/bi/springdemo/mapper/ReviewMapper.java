@@ -10,6 +10,7 @@ public class ReviewMapper {
     public ReviewDTO toDto(Review review){
         ReviewDTO reviewDTO = new ReviewDTO();
 
+        reviewDTO.setReviewId(review.getReviewId());
         reviewDTO.setBookId(review.getBook().getBookId());
         reviewDTO.setUserId(review.getUser().getUserId());
         reviewDTO.setRating(review.getRating());

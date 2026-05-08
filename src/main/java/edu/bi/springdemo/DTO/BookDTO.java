@@ -3,6 +3,8 @@ import jakarta.validation.constraints.*;
 
 public class BookDTO { //api request data, without relationships, id etc.
 
+    private Integer bookId;
+
     @NotBlank
     private String isbn;
 
@@ -20,6 +22,14 @@ public class BookDTO { //api request data, without relationships, id etc.
 
     @NotNull
     private Long availableCopies;
+
+    public Integer getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Integer bookId) {
+        this.bookId = bookId;
+    }
 
     public String getIsbn() {
         return isbn;

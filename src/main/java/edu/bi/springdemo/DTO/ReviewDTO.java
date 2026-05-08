@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 
 public class ReviewDTO {
 
+    private Integer reviewId;
+
     @NotNull
     private Integer bookId;
 
@@ -16,6 +18,14 @@ public class ReviewDTO {
     private String comment;
 
     private LocalDate reviewDate;
+
+    public Integer getReviewId() {
+        return reviewId;
+    }
+
+    public void setReviewId(Integer reviewId) {
+        this.reviewId = reviewId;
+    }
 
     public Integer getBookId() {
         return bookId;

@@ -6,6 +6,7 @@ import edu.bi.springdemo.enums.UserRole;
 import jakarta.validation.constraints.*;
 
 public class UserDTO {
+    private Integer userId;
 
     @NotBlank
     private String username;
@@ -22,6 +23,14 @@ public class UserDTO {
 
     @NotBlank
     private String name;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public String getUsername() {
         return username;

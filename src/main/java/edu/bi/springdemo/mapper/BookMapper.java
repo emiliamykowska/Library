@@ -9,6 +9,7 @@ public class BookMapper {
     public BookDTO toDto(Book book) {
         BookDTO bookDTO = new BookDTO();
 
+        bookDTO.setBookId(book.getBookId());
         bookDTO.setIsbn(book.getIsbn());
         bookDTO.setTitle(book.getTitle());
         bookDTO.setAuthor(book.getAuthor());
@@ -22,6 +23,7 @@ public class BookMapper {
     public Book toEntity(BookDTO bookDTO) {
         Book book = new Book();
 
+        book.setBookId(bookDTO.getBookId());
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
         book.setAuthor(bookDTO.getAuthor());

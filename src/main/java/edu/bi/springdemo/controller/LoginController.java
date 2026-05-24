@@ -1,7 +1,9 @@
 package edu.bi.springdemo.controller;
 
 import edu.bi.springdemo.DTO.LoginDTO;
+import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.service.LoginService;
+import edu.bi.springdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +18,23 @@ import java.util.Map;
 @RestController
 public class LoginController {
     private final LoginService loginService;
+    private final UserService userService;
 
     @Autowired
-    public LoginController(LoginService loginService){
+    public LoginController(LoginService loginService, UserService userService){
         this.loginService = loginService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Validated @RequestBody LoginDTO loginDTO){
         String token = loginService.login(loginDTO.getUsername(), loginDTO.getPassword());
 
+        User user = userService.findByUsername(loginDTO.getUsername());
+
         Map<String, String> map = new HashMap<>();
         map.put("token", token);
+        map.put("role", user.getRole().name());
 
         return new ResponseEntity<>(map, HttpStatus.OK);
     }

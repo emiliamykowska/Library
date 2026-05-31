@@ -53,7 +53,9 @@ public class ReviewController {
         }
 
         for (Review review : reviews){
-            result.add(reviewMapper.toDto(review));
+            ReviewDTO dto = reviewMapper.toDto(review);
+            dto.setBookTitle(review.getBook().getTitle());
+            result.add(dto);
         }
 
         return result;

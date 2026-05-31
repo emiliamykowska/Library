@@ -9,6 +9,8 @@ public class ReviewDTO {
     @NotNull
     private Integer bookId;
 
+    private String bookTitle;
+
     private Integer userId;
 
     @NotNull
@@ -65,5 +67,14 @@ public class ReviewDTO {
 
     public void setReviewDate(LocalDate reviewDate) {
         this.reviewDate = reviewDate;
+    }
+
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
     }
 }

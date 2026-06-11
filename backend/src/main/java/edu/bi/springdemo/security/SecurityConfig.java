@@ -53,6 +53,7 @@ public class SecurityConfig {
                                         .requestMatchers("/login").permitAll()
                                         .requestMatchers(HttpMethod.GET,"/books").permitAll()//
                                         .requestMatchers(HttpMethod.GET, "/books/search").permitAll()//
+                                        .requestMatchers(HttpMethod.GET, "/books/{id}").permitAll()//
                                         .requestMatchers(HttpMethod.GET, "/reviews").permitAll()//
                                         .requestMatchers(HttpMethod.POST, "/reviews/*").hasRole("LIBRARIAN")
                                         .requestMatchers(HttpMethod.POST, "/reviews").hasAnyRole("READER", "LIBRARIAN")

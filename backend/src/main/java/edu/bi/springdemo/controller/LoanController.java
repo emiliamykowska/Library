@@ -1,6 +1,9 @@
 package edu.bi.springdemo.controller;
 
+import edu.bi.springdemo.DTO.BookDTO;
 import edu.bi.springdemo.DTO.LoanDTO;
+import edu.bi.springdemo.DTO.ReviewDTO;
+import edu.bi.springdemo.entity.Book;
 import edu.bi.springdemo.exception.ResourceNotFoundException;
 import edu.bi.springdemo.mapper.LoanMapper;
 import edu.bi.springdemo.service.LoanService;
@@ -56,7 +59,10 @@ public class LoanController {
         List<LoanDTO> result = new ArrayList<>();
 
         for (Loan loan : loanService.findAll()){
-            result.add(loanMapper.toDto(loan));
+            LoanDTO dto = loanMapper.toDto(loan);
+            dto.setBookTitle(loan.getBook().getTitle());
+            dto.setUsername(loan.getUser().getUsername());
+            result.add(dto);
         }
         return result;
     }
@@ -72,7 +78,9 @@ public class LoanController {
         }
 
         for (Loan loan : userLoans){
-            result.add(loanMapper.toDto(loan));
+            LoanDTO dto = loanMapper.toDto(loan);
+            dto.setBookTitle(loan.getBook().getTitle());
+            result.add(dto);
         }
         return result;
     }
@@ -88,7 +96,9 @@ public class LoanController {
         }
 
         for (Loan loan : usersLoans){
-            result.add(loanMapper.toDto(loan));
+            LoanDTO dto = loanMapper.toDto(loan);
+            dto.setBookTitle(loan.getBook().getTitle());
+            result.add(dto);
         }
         return result;
     }

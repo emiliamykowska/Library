@@ -8,7 +8,11 @@ public class LoanDTO {
     @NotNull
     private Integer bookId;
 
+    private String bookTitle;
+
     private Integer userId;
+
+    private String username;
 
     private LocalDate loanDate;
 
@@ -54,5 +58,21 @@ public class LoanDTO {
 
     public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public String getBookTitle() {
+        return bookTitle;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

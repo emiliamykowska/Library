@@ -13,6 +13,8 @@ public class ReviewDTO {
 
     private Integer userId;
 
+    private String username;
+
     @NotNull
     private Integer rating;
 
@@ -43,6 +45,14 @@ public class ReviewDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Integer getRating() {

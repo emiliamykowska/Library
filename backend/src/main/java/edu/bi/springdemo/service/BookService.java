@@ -75,13 +75,27 @@ public class BookService {
     }
 
     public void delete(Integer id){
-        if (!bookRepository.existsById(id)) {
-            throw ResourceNotFoundException.create("Book with that id was not found");
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.create("Book with that id was not found"));
+
+        boolean hasActiveLoans = book.getLoans().stream()
+                .anyMatch(loan -> loan.getReturnDate() == null);
+
+        if (hasActiveLoans) {
+            throw NotValidArgumentException.create(
+                    "Cannot delete this book because copies are currently borrowed by readers!"
+            );
         }
+
         bookRepository.deleteById(id);
     }
 
     public List<Book> findBook(String title){
         return bookRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public Book findById(Integer id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.create("Book with that id was not found"));
     }
 }

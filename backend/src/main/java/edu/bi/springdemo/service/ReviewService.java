@@ -2,6 +2,7 @@ package edu.bi.springdemo.service;
 
 import edu.bi.springdemo.DTO.ReviewDTO;
 import edu.bi.springdemo.entity.Book;
+import edu.bi.springdemo.entity.Loan;
 import edu.bi.springdemo.entity.Review;
 import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.exception.NotValidArgumentException;
@@ -151,6 +152,20 @@ public class ReviewService {
         }
 
         return reviewRepository.save(review);
+    }
+
+    public Review findById(Integer id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.create("Review with that id was not found"));
+    }
+
+    @Transactional
+    public void reassignUserReviews(Integer userToDeleteId, User placeholderUser) {
+        List<Review> userReviews = reviewRepository.findByUserUserId(userToDeleteId);
+        for (Review review : userReviews) {
+            review.setUser(placeholderUser);
+        }
+        reviewRepository.saveAll(userReviews);
     }
 
 }

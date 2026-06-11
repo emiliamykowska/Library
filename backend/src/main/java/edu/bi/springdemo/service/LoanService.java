@@ -177,4 +177,13 @@ public class LoanService {
 
         return loanRepository.findByUserUserId(userId);
     }
+
+    @Transactional
+    public void reassignUserLoans(Integer userToDeleteId, User placeholderUser) {
+        List<Loan> userLoans = loanRepository.findByUserUserId(userToDeleteId);
+        for (Loan loan : userLoans) {
+            loan.setUser(placeholderUser);
+        }
+        loanRepository.saveAll(userLoans);
+    }
 }

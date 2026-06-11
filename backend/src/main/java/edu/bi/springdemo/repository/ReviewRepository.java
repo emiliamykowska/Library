@@ -1,6 +1,7 @@
 package edu.bi.springdemo.repository;
 
 import edu.bi.springdemo.entity.Book;
+import edu.bi.springdemo.entity.Loan;
 import edu.bi.springdemo.entity.Review;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,4 +18,6 @@ public interface ReviewRepository extends CrudRepository<Review, Integer> {
                                        @Param("bookId") Integer bookId);
 
     List<Review> findByBookTitleContainingIgnoreCase(String title);
+
+    List<Review> findByUserUserId(Integer userId);
 }

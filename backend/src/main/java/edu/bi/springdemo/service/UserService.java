@@ -6,6 +6,8 @@ import edu.bi.springdemo.exception.DuplicatedDataException;
 import edu.bi.springdemo.exception.NotValidArgumentException;
 import edu.bi.springdemo.exception.ResourceNotFoundException;
 import edu.bi.springdemo.repository.UserRepository;
+import edu.bi.springdemo.service.LoanService;
+import edu.bi.springdemo.service.ReviewService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,17 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final LoanService loanService;
+    private final ReviewService reviewService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    private static final Integer DELETED_USER_ID = 9999;
+
+    public UserService(UserRepository userRepository, LoanService loanService,
+                       ReviewService reviewService, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.loanService = loanService;
+        this.reviewService = reviewService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -88,16 +97,31 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void delete(Integer id){
-        if (!userRepository.existsById(id)){
-            throw ResourceNotFoundException.create("User with that id was not found");
+        if (id.equals(DELETED_USER_ID)) {
+            throw NotValidArgumentException.create("Cannot delete the system placeholder user");
         }
 
-        userRepository.deleteById(id);
+        User userToDelete = userRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.create("User with that id was not found"));
+
+        User deletedUserPlaceholder = userRepository.findById(DELETED_USER_ID)
+                .orElseThrow(() -> new IllegalStateException("System 'Deleted User' placeholder (ID 9999) is missing!"));
+
+        loanService.reassignUserLoans(id, deletedUserPlaceholder);
+        reviewService.reassignUserReviews(id, deletedUserPlaceholder);
+
+        userRepository.delete(userToDelete);
     }
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> ResourceNotFoundException.create("User with username " + username + " was not found"));
+    }
+
+    public User findById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.create("User with that id was not found"));
     }
 }

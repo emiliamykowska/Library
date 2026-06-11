@@ -13,20 +13,20 @@ public class Book { //how book is stored in the database, with id, relationships
 
     @Column(unique=true) //coz isbn is different for every book, also not null could be specified etc.
     private String isbn;
+
+    @Column(unique=true)
     private String title;
+
     private String author;
     private String publisher;
     private Long year;
     private Long availableCopies;
 
-    @OneToMany(mappedBy = "book") //look for the field book in loan entity
+    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true) //look for the field book in loan entity
     private List<Loan> loans;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Review> reviews;
-
-    @OneToOne(mappedBy = "book") //it points to BookDetial.book field
-    private BookDetail bookDetail;
 
     public Integer getBookId() {
         return bookId;
@@ -82,5 +82,21 @@ public class Book { //how book is stored in the database, with id, relationships
 
     public void setAvailableCopies(Long availableCopies) {
         this.availableCopies = availableCopies;
+    }
+
+    public List<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(List<Loan> loans) {
+        this.loans = loans;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

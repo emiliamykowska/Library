@@ -1,6 +1,8 @@
 package edu.bi.springdemo.controller;
 
+import edu.bi.springdemo.DTO.BookDTO;
 import edu.bi.springdemo.DTO.ReviewDTO;
+import edu.bi.springdemo.entity.Book;
 import edu.bi.springdemo.mapper.ReviewMapper;
 import edu.bi.springdemo.service.ReviewService;
 import edu.bi.springdemo.entity.Review;
@@ -55,6 +57,7 @@ public class ReviewController {
         for (Review review : reviews){
             ReviewDTO dto = reviewMapper.toDto(review);
             dto.setBookTitle(review.getBook().getTitle());
+            dto.setUsername(review.getUser().getUsername());
             result.add(dto);
         }
 
@@ -71,5 +74,11 @@ public class ReviewController {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteReview(@PathVariable Integer id){
         reviewService.delete(id);
+    }
+
+    @GetMapping("/{id}")
+    public @ResponseBody ReviewDTO getReview(@PathVariable Integer id) {
+        Review review = reviewService.findById(id);
+        return reviewMapper.toDto(review);
     }
 }

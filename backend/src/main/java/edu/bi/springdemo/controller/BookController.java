@@ -90,4 +90,10 @@ public class BookController {
     public void deleteBook(@PathVariable Integer id){
         bookService.delete(id);
     }
+
+    @GetMapping("/{id}")
+    public @ResponseBody BookDTO getBook(@PathVariable Integer id) {
+        Book book = bookService.findById(id);
+        return bookMapper.toDto(book);
+    }
 }

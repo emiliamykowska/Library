@@ -1,6 +1,8 @@
 package edu.bi.springdemo.controller;
 
+import edu.bi.springdemo.DTO.BookDTO;
 import edu.bi.springdemo.DTO.UserDTO;
+import edu.bi.springdemo.entity.Book;
 import edu.bi.springdemo.mapper.UserMapper;
 import edu.bi.springdemo.service.UserService;
 import edu.bi.springdemo.entity.User;
@@ -53,5 +55,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Integer id){
         userService.delete(id);
+    }
+
+    @GetMapping("/{id}")
+    public @ResponseBody UserDTO getUser(@PathVariable Integer id) {
+        User user = userService.findById(id);
+        return userMapper.toDTO(user);
     }
 }

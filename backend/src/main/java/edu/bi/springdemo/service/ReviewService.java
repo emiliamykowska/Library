@@ -168,4 +168,12 @@ public class ReviewService {
         reviewRepository.saveAll(userReviews);
     }
 
+    public List<Review> findReviewsByBookId(Integer bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw ResourceNotFoundException.create("Book with id " + bookId + " was not found");
+        }
+
+        return reviewRepository.findByBookBookId(bookId);
+    }
+
 }

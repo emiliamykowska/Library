@@ -19,5 +19,7 @@ public interface ReviewRepository extends CrudRepository<Review, Integer> {
 
     List<Review> findByBookTitleContainingIgnoreCase(String title);
 
+    List<Review> findByBookBookId(Integer bookId);
+
     List<Review> findByUserUserId(Integer userId);
 }

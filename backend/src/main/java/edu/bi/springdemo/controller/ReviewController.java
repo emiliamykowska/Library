@@ -81,4 +81,19 @@ public class ReviewController {
         Review review = reviewService.findById(id);
         return reviewMapper.toDto(review);
     }
+
+    @GetMapping("/book/{bookId}")
+    public Iterable<ReviewDTO> getReviewsByBookId(@PathVariable Integer bookId){
+        List<ReviewDTO> result = new ArrayList<>();
+        Iterable<Review> reviews = reviewService.findReviewsByBookId(bookId);
+
+        for (Review review : reviews){
+            ReviewDTO dto = reviewMapper.toDto(review);
+            dto.setBookTitle(review.getBook().getTitle());
+            dto.setUsername(review.getUser().getUsername());
+            result.add(dto);
+        }
+
+        return result;
+    }
 }

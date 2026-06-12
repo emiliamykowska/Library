@@ -9,6 +9,7 @@ public class LoanMapper {
     public LoanDTO toDto(Loan loan){
         LoanDTO loanDTO = new LoanDTO();
 
+        loanDTO.setLoanId(loan.getLoanId());
         loanDTO.setBookId(loan.getBook().getBookId());
         loanDTO.setUserId(loan.getUser().getUserId());
         loanDTO.setLoanDate(loan.getLoanDate());

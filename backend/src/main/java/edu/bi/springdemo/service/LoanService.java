@@ -31,30 +31,6 @@ public class LoanService {
         this.userRepository = userRepository;
     }
 
-//    @Transactional
-//    public Loan save(LoanDTO loanDTO){
-//        if (loanDTO.getDueDate().isBefore(loanDTO.getLoanDate())) {
-//            throw NotValidArgumentException.create("Due date cannot be before loan date");
-//        }
-//
-//        if (loanDTO.getReturnDate().isBefore(loanDTO.getLoanDate())) {
-//            throw NotValidArgumentException.create("Return date cannot be before loan date");
-//        }
-//
-//        Book book = bookRepository.findById(loanDTO.getBookId()).orElseThrow(() -> ResourceNotFoundException.create("Book not found"));
-//        User user = userRepository.findById(loanDTO.getUserId()).orElseThrow(() -> ResourceNotFoundException.create("User not found"));
-//
-//        Loan loan = new Loan();
-//
-//        loan.setBook(book);
-//        loan.setUser(user);
-//        loan.setLoanDate(loanDTO.getLoanDate());
-//        loan.setDueDate(loanDTO.getDueDate());
-//        loan.setReturnDate(loanDTO.getReturnDate());
-//
-//        return loanRepository.save(loan);
-//    }
-
     @Transactional
     public Loan borrowBookAsLibrarian(LoanDTO loanDTO){
         LocalDate loanDate = loanDTO.getLoanDate() != null ? loanDTO.getLoanDate() : LocalDate.now();

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 
 public class LoanDTO {
 
+    private Integer loanId;
     @NotNull
     private Integer bookId;
 
@@ -19,6 +20,14 @@ public class LoanDTO {
     private LocalDate dueDate;
 
     private LocalDate returnDate;
+
+    public Integer getLoanId() {
+        return loanId;
+    }
+
+    public void setLoanId(Integer loanId) {
+        this.loanId = loanId;
+    }
 
     public Integer getBookId() {
         return bookId;

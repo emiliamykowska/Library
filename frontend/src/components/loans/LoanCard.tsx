@@ -1,9 +1,9 @@
 import type { Loan } from "../loans/Loan";
 import GeneralCard from "../GeneralCard";
 import { Typography, IconButton, Box } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import AssignmentReturn from "@mui/icons-material/AssignmentReturn";
+import { useApi } from "../../ApiProvider";
+import { useState } from "react";
 
 interface LoanCardProps {
     loan: Loan;
@@ -15,20 +15,39 @@ function LoanCard(
     { loan, isLibrarian
     }: LoanCardProps
 ) {
+    const apiClient = useApi();
+
+    const [returnDate, setReturnDate] = useState<string | Date | null>(loan.returnDate);
+
+    const onReturn = async () => {
+        const result = await apiClient.loans.returnBook(
+            loan.loanId,
+            {}
+        );
+
+        if (result.success) {
+            console.log("Book returned");
+            setReturnDate(new Date().toLocaleDateString());
+        }
+    };
+
     return (
-        <GeneralCard>            
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+        <GeneralCard>          
+            <Typography variant="h6">
+                Loan Id: {loan.loanId}
+            </Typography>  
+            <Typography>
                 {loan.bookTitle}
             </Typography>
-            <Typography variant="h5" >
+            <Typography variant="h6" >
                 Book Id: {loan.bookId}
             </Typography>
 
             {isLibrarian && (<Box>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Typography>
                 {loan.username}
             </Typography>
-                <Typography variant="h5">
+                <Typography variant="h6">
                 User Id: {loan.userId}
             </Typography>
             </Box>
@@ -41,15 +60,18 @@ function LoanCard(
                 Due Date: {String(loan.dueDate)}
             </Typography>
             <Typography>
-                Return Date: {loan.returnDate !== null ? String(loan.returnDate) : (
-        <>        
-            <span style={{ color: "#c62828", fontWeight: 600 }}>
-                The book was not returned yet
-            </span>
-            <IconButton>
-                <AssignmentReturn />
-            </IconButton>
-        </>
+                Return Date: {returnDate !== null ? String(returnDate) : (
+                <>        
+                    <span style={{ color: "#c62828", fontWeight: 600 }}>
+                        The book was not returned yet
+                    </span>
+                    
+                    <IconButton 
+                        title="Return with today's date" 
+                        onClick={onReturn}>
+                        <AssignmentReturn/>
+                    </IconButton>
+                </>
     )}
             </Typography>
         </GeneralCard >

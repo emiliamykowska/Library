@@ -45,24 +45,13 @@ function UserTable() {
 
   return (
     <Box className="list-form">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          marginBottom: 4,
-          paddingX: 2,
-        }}
-      >        
-      </Box>
-
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Username</TableCell>
+            <TableCell>User ID</TableCell>
             <TableCell>Email</TableCell>
+            <TableCell>Name</TableCell>
             <TableCell>Role</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
@@ -72,7 +61,9 @@ function UserTable() {
           {users.map((user) => (
             <TableRow key={user.userId}>
               <TableCell>{user.username}</TableCell>
+              <TableCell>{user.userId}</TableCell>
               <TableCell>{user.email}</TableCell>
+              <TableCell>{user.name}</TableCell>
               <TableCell>{user.role}</TableCell>
               <TableCell>
                 <IconButton onClick={() => navigate((`/users/edit/${user.userId}`))}>

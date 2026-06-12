@@ -3,6 +3,7 @@ import "../css_files/List.css";
 import { useApi } from "../../ApiProvider";
 import { useEffect, useState } from "react";
 import type { Review } from "./Review";
+import { useParams, useNavigate } from "react-router-dom";
 
 function ReviewList() {
     const [isLibrarian] = useState<boolean>(
@@ -11,6 +12,7 @@ function ReviewList() {
 
     const apiClient = useApi();
 
+    const { bookId } = useParams<{ bookId: string }>();
     const [reviews, setReviews] = useState<Review[]>([]);
 
     const onDelete = async (reviewId: number) => {
@@ -21,23 +23,31 @@ function ReviewList() {
                 reviews.filter(review => review.reviewId !== reviewId)
             );
         }
-    };
+    };    
+    
 
     useEffect(() => {
-        apiClient.reviews.getReviews()
-            .then((response) => {
-                if (response.success && response.data) {
-                    setReviews(response.data)
-                }
-            }
-            )
-    },
-        [apiClient])
+        if (bookId != null) {            
+            apiClient.reviews.getReviewByBook(Number(bookId))
+                .then((response) => {
+                    if (response.success && response.data) {
+                        setReviews(response.data);
+                    }
+                });
+        } else {            
+            apiClient.reviews.getReviews()
+                .then((response) => {
+                    if (response.success && response.data) {
+                        setReviews(response.data);
+                    }
+                });
+        }
+    }, [apiClient, bookId]);
 
 
     return (
         <div className="list-form">
-            {
+            {reviews.length > 0 ? (                
                 reviews.map((review) => (
                     <ReviewCard
                         key={review.reviewId}
@@ -45,9 +55,16 @@ function ReviewList() {
                         isLibrarian={isLibrarian}
                         onDelete={onDelete}
                     />
-                ))
+                ))        
+            ) : (                   
+                <p>
+                    This book does not have any reviews yet
+                </p>
+            )
             }
         </div >
+
+        
     );
 }
 

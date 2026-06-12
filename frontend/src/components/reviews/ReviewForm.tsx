@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Box } from "@mui/material";
 import "../css_files/Form.css";
 import AddIcon from "@mui/icons-material/Add";
 import { Formik } from "formik";
@@ -7,6 +7,8 @@ import * as yup from "yup";
 import type { ReviewFormValues } from "../reviews/ReviewFormValues";
 import { LibraryClient } from "../../api/library-client";
 import { useNavigate, useParams } from "react-router-dom";
+import type { Book } from "../books/Book";
+import { Autocomplete } from "@mui/material";
 
 function ReviewForm() {
     const [isLibrarian] = useState<boolean>(
@@ -23,6 +25,17 @@ function ReviewForm() {
     const isEditing = !!reviewId
 
     const [formValues, setFormValues] = useState<ReviewFormValues | null>(null);
+
+    const [books, setBooks] = useState<Book[]>([]);
+        const searchBooks = async (title: string) => {
+            const result = await client.books.searchBooks(title);
+    
+            if (result.success && result.data) {
+                setBooks(result.data);
+            } else {
+                setBooks([]);
+            }
+        };
 
     useEffect(() => {
         if (reviewId) {                        
@@ -95,22 +108,34 @@ function ReviewForm() {
             >
                 {(formik) => (
                     <form className="form" onSubmit={formik.handleSubmit}>
-                        <TextField
-                            id="bookId"
-                            name="bookId"
-                            label="Book ID:"
-                            type="number"
-                            variant="standard"
-                            fullWidth
-                            slotProps={{
-                                htmlInput: { min: 1 }
+                        <Box
+                            sx={{
+                                width: "100%",
                             }}
-                            value={formik.values.bookId}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={formik.touched.bookId && !!formik.errors.bookId}
-                            helperText={formik.touched.bookId && formik.errors.bookId}
-                        />
+                        >
+                            <Autocomplete
+                                fullWidth
+                                options={books}
+                                getOptionLabel={(option) => option.title}
+                                onInputChange={(_, value) => {
+                                    searchBooks(value);
+                                }}
+                                onChange={(_, selectedBook) => {
+                                    formik.setFieldValue(
+                                        "bookId",
+                                        selectedBook?.bookId ?? 0
+                                    );
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Book title"
+                                        variant="standard"
+                                        fullWidth
+                                    />
+                                )}
+                            />
+                        </Box>
 
                         {isLibrarian && (                            
                             <TextField

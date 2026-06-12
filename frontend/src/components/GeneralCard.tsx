@@ -8,7 +8,7 @@ interface GeneralCardProps {
 function GeneralCard({ children }: GeneralCardProps) {
     return (
         <Card sx={{
-            width: '100%',
+            minWidth: '700px',
             minHeight: '250px',
             borderRadius: '30px',
             display: 'flex',
@@ -22,7 +22,7 @@ function GeneralCard({ children }: GeneralCardProps) {
                 alignItems: 'center',
                 textAlign: 'center',
                 flexGrow: 1,
-                padding: '20px !important',
+                padding: '20px !important'
             }}>
                 {children}
             </CardContent>

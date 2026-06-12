@@ -65,10 +65,12 @@ function MainPage() {
                     <Typography color="textSecondary">Books</Typography>
                 </Paper>
 
+                {isLibrarian && 
                 <Paper className="stat-card">
                     <Typography variant="h5" sx={{ fontWeight: 700 }}>{users.length}</Typography>
                     <Typography color="textSecondary">Users</Typography>
                 </Paper>
+                }               
 
                 <Paper className="stat-card">
                     <Typography variant="h5" sx={{ fontWeight: 700 }}>{reviews.length}</Typography>

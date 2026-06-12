@@ -3,6 +3,7 @@ import "../css_files/List.css";
 import { useApi } from "../../ApiProvider";
 import { useEffect, useState } from "react";
 import type { Book } from "./Book";
+import { TextField, Box } from "@mui/material";
 
 function BookList() {
     const [isLibrarian] = useState<boolean>(
@@ -33,19 +34,35 @@ function BookList() {
         }
     };
 
-    return (
-        <div className="list-form">
-            {books.map((book) => (
-                <BookCard
-                    key={book.bookId}
-                    book={book}
-                    isLibrarian={isLibrarian}
-                    onDelete={onDelete}
-                />
-            ))}
+    const onSearch = async (text: string) => {
+        const response = await apiClient.books.searchBooks(text);
 
-        </div>
-    );
+        if (response.success && response.data) {
+            setBooks(response.data);
+        }
+    };
+
+    return (
+        <Box sx={{ width: "100%", p: 2 }}>
+            <TextField sx={{borderColor: "#8b6f47", width: "800px"}}
+                placeholder="Search books by title"
+                variant="outlined"                
+                onChange={(e) => onSearch(e.target.value)}
+            />
+            <div className="list-form">
+                {books.map((book) => (
+                    <BookCard
+                        key={book.bookId}
+                        book={book}
+                        isLibrarian={isLibrarian}
+                        onDelete={onDelete}
+                    />
+                ))}
+
+            </div>
+        </Box>
+        );       
+
 }
 
 export default BookList;

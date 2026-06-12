@@ -39,11 +39,19 @@ function LoanForm() {
 
     const onSubmit = useCallback(
             async (values: LoanFormValues) => {
-                    const result = await client.loans.borrowBook(values);
+                    const result = isLibrarian 
+                        ? await client.loans.borrowForUser(values.userId, values)
+                        : await client.loans.borrowBook(values);
     
                     if (result.success) {
                         console.log("Loan added");
-                        navigate('/loans')
+                        if (isLibrarian){
+                            navigate('/loans/all')
+                        }
+                        else{
+                             navigate('/loans/my')
+                        }
+                        
                     }
                 },            
             [client]
@@ -60,9 +68,10 @@ function LoanForm() {
                 otherwise: (schema) => schema.notRequired()
             }),
             loanDate: yup.date().nullable(),
-            dueDate: yup.date().nullable()
+            dueDate: yup.date().nullable().min(yup.ref('loanDate'), "Due date cannot be before the loan date")
         }),
-        []);
+        [isLibrarian]);
+   
 
     return (
         <div>
@@ -156,6 +165,8 @@ function LoanForm() {
                                     value={formik.values.loanDate}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    error={formik.touched.loanDate && !!formik.errors.loanDate}
+                                    helperText={formik.touched.loanDate && formik.errors.loanDate}
                                 />
 
                                 <TextField
@@ -169,6 +180,8 @@ function LoanForm() {
                                     value={formik.values.dueDate}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    error={formik.touched.dueDate && !!formik.errors.dueDate}
+                                    helperText={formik.touched.dueDate && formik.errors.dueDate}
                                 />
                             </Box>
                         )}

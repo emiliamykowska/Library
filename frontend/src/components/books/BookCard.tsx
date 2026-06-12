@@ -3,6 +3,7 @@ import GeneralCard from "../GeneralCard";
 import { Typography, IconButton, Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 
 interface BookCardProps {
@@ -41,17 +42,33 @@ function BookCard(
                 }}>
                 Available copies: {book.availableCopies}
             </Typography>
+            
+            <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
+                <IconButton 
+                        title="Reviews" 
+                        sx={{ color: "#8b6f47" }} 
+                        onClick={() => navigate(`/books/${book.bookId}/reviews`)}
+                    >
+                        <CommentIcon />
+                </IconButton>
 
-            {isLibrarian && (
-                <Box>
-                    <IconButton onClick={() => navigate(`/books/edit/${book.bookId}`)}>
-                        <EditIcon/>
-                    </IconButton>
-                    <IconButton color="error" onClick={() => onDelete?.(book.bookId)}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Box>
-            )}
+                {isLibrarian && (  
+                    <Box>                  
+                        <IconButton 
+                            title="Edit" 
+                            onClick={() => navigate(`/books/edit/${book.bookId}`)}>
+                            <EditIcon/>
+                        </IconButton>
+                        <IconButton 
+                            title="Delete" 
+                            color="error" 
+                            onClick={() => onDelete?.(book.bookId)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Box>
+                    
+                )}
+            </Box>
 
         </GeneralCard >
     )

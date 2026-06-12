@@ -58,6 +58,30 @@ export class ReviewClient {
                 }
             }
         }
+    
+    public async getReviewByBook(bookId: number): Promise<ClientResponse<Review[] | null>> {
+
+        try {
+            const response: AxiosResponse<Review[]> = await this.client.get(
+                `/reviews/book/${bookId}`
+            );
+
+            return {
+                success: true,
+                data: response.data,
+                statusCode: response.status
+            };
+        }
+        catch (error) {
+            const axiosError = error as AxiosError<Error>;
+
+            return {
+                success: false,
+                data: null,
+                statusCode: axiosError.response?.status || 0
+            }
+        }
+    }
 
     public async addReview(review: ReviewFormValues): Promise<ClientResponse<Review | null>> {
     

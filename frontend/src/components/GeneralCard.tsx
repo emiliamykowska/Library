@@ -9,7 +9,7 @@ function GeneralCard({ children }: GeneralCardProps) {
     return (
         <Card sx={{
             width: '100%',
-            height: '250px',
+            minHeight: '250px',
             borderRadius: '30px',
             display: 'flex',
             flexDirection: 'column',
@@ -21,7 +21,8 @@ function GeneralCard({ children }: GeneralCardProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                height: '100%',
+                flexGrow: 1,
+                padding: '20px !important',
             }}>
                 {children}
             </CardContent>

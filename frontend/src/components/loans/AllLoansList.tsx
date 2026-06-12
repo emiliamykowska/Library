@@ -25,8 +25,6 @@ function AllLoansList() {
 
     return (
         <div className="list-form">
-            <h1>List of Loans</h1>
-
             {
                 loans.map((loan) => (
                     <LoanCard

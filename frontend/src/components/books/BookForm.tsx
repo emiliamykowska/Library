@@ -2,23 +2,62 @@ import { Button, TextField } from "@mui/material";
 import "../css_files/Form.css";
 import AddIcon from "@mui/icons-material/Add";
 import { Formik } from "formik";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import * as yup from "yup";
 import type { BookFormValues } from "../books/BookFormValues";
+import { LibraryClient } from "../../api/library-client";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 function BookForm() {
-    const onSubmit = useCallback(
-        (values: BookFormValues,
-            formik: any) => {
-            const formattedValues = {
-                ...values, //take all the values and copy here
-                year: Number(values.year), //overwrite to convert string to number
-                availableCopies: Number(values.availableCopies),
-            };
+    const navigate = useNavigate();
 
-            console.log(formattedValues);
-        }, []
-    );
+    const client = useMemo(() => 
+        new LibraryClient(), []);
+
+    const { bookId } = useParams<{ bookId: string }>();
+
+    const isEditing = !!bookId
+
+    const [formValues, setFormValues] = useState<BookFormValues | null>(null);
+
+    useEffect(() => {
+        if (bookId) {                        
+            client.books.getBook(Number(bookId)) 
+                .then((response) => {
+                    if (response.success && response.data) {
+                        setFormValues(response.data);
+                    }
+                })
+                .catch((error) => console.error("Error fetching book data:", error));
+        } else {
+            setFormValues({ title: '', author: '', availableCopies: 0, isbn: '', publisher: '', year: 0 });
+        }
+    }, [bookId, client]);
+  
+    const onSubmit = useCallback(
+        async (values: BookFormValues) => {
+            if (isEditing && bookId) {
+                const result = await client.books.updateBook(
+                    Number(bookId),
+                    values
+                );
+
+                if (result.success) {
+                    console.log("Book updated");
+                    navigate('/books')
+                }
+            } else {
+                const result = await client.books.addBook(values);
+
+                if (result.success) {
+                    console.log("Book added");
+                    navigate('/books')
+                }
+            }
+        },
+        [client, isEditing, bookId]
+    );    
 
     const validationSchema = useMemo(() => yup.object().shape({
         title: yup.string().required("Title is required!"),
@@ -32,9 +71,14 @@ function BookForm() {
         year: yup.number().required("Year is required").positive("Year cannot be negative")
     }), []);
 
+    if (!formValues) {
+        return <div>Loading book details</div>;
+    }
+
     return (
         <div>
-            <Formik<BookFormValues> initialValues={{ title: '', author: '', availableCopies: 0, isbn: '', publisher: '', year: 0 }}
+            <Formik<BookFormValues> initialValues={formValues}
+                enableReinitialize
                 onSubmit={onSubmit}
                 validationSchema={validationSchema}
                 validateOnChange
@@ -46,6 +90,7 @@ function BookForm() {
                             name="title"
                             label="Title:"
                             variant="standard"
+                            value={formik.values.title}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.title && !!formik.errors.title}
@@ -55,6 +100,7 @@ function BookForm() {
                             name="author"
                             label="Author:"
                             variant="standard"
+                            value={formik.values.author}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.author && !!formik.errors.author}
@@ -65,6 +111,7 @@ function BookForm() {
                             name="availableCopies"
                             label="Available Copies:"
                             variant="standard"
+                            value={formik.values.availableCopies}
                             type="number"
                             slotProps={{
                                 htmlInput: { min: 0 }
@@ -79,6 +126,7 @@ function BookForm() {
                             name="isbn"
                             label="ISBN:"
                             variant="standard"
+                            value={formik.values.isbn}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.isbn && !!formik.errors.isbn}
@@ -89,6 +137,7 @@ function BookForm() {
                             name="publisher"
                             label="Publisher:"
                             variant="standard"
+                            value={formik.values.publisher}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.publisher && !!formik.errors.publisher}
@@ -99,6 +148,7 @@ function BookForm() {
                             name="year"
                             label="Year:"
                             variant="standard"
+                            value={formik.values.year}
                             type="number"
                             slotProps={{
                                 htmlInput: { min: 0 }
@@ -113,7 +163,7 @@ function BookForm() {
                             startIcon={<AddIcon />}
                             type="submit"
                             disabled={!formik.dirty || !formik.isValid}>
-                            Add Book
+                            <span>{isEditing? "Edit Book" : "Add Book"} </span>
                         </Button>
                     </form>
                 )}

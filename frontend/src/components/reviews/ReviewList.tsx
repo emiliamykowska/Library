@@ -1,7 +1,5 @@
 import ReviewCard from "./ReviewCard";
 import "../css_files/List.css";
-import { Button } from "@mui/material";
-import { Link } from "react-router-dom";
 import { useApi } from "../../ApiProvider";
 import { useEffect, useState } from "react";
 import type { Review } from "./Review";
@@ -15,6 +13,15 @@ function ReviewList() {
 
     const [reviews, setReviews] = useState<Review[]>([]);
 
+    const onDelete = async (reviewId: number) => {
+        const result = await apiClient.reviews.deleteReview(reviewId);
+
+        if (result.success) {
+            setReviews(reviews =>
+                reviews.filter(review => review.reviewId !== reviewId)
+            );
+        }
+    };
 
     useEffect(() => {
         apiClient.reviews.getReviews()
@@ -30,23 +37,13 @@ function ReviewList() {
 
     return (
         <div className="list-form">
-            <h1>List of Reviews</h1>
-
-            <Button
-                variant="contained"
-                component={Link}
-                to="/reviews/add"
-            >
-                Add Review
-            </Button>
-
-
             {
                 reviews.map((review) => (
                     <ReviewCard
                         key={review.reviewId}
                         review={review}
                         isLibrarian={isLibrarian}
+                        onDelete={onDelete}
                     />
                 ))
             }

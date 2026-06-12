@@ -93,6 +93,7 @@ function MainPage() {
                 variant="contained"
                 component={Link}
                 to="/books"
+                sx={{backgroundColor: "#8b6f4f"}}      
             >
                 View All Books
             </Button>
@@ -102,6 +103,7 @@ function MainPage() {
                     variant="contained"
                     component={Link}
                     to="/login"
+                    sx={{backgroundColor: "#8b6f4f"}}
                 >
                     LogIn
                 </Button>

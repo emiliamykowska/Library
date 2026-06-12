@@ -2,19 +2,62 @@ import { Button, TextField } from "@mui/material";
 import "../css_files/Form.css";
 import AddIcon from "@mui/icons-material/Add";
 import { Formik } from "formik";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { MenuItem } from "@mui/material";
 import * as yup from "yup";
 import type { UserFormValues } from "../users/UserFormValues";
+import { LibraryClient } from "../../api/library-client";
+import { useNavigate, useParams } from "react-router-dom";
 
 function UserForm() {
+    const navigate = useNavigate();
+    
+    const client = useMemo(() => 
+        new LibraryClient(), []);
+
+    const { userId } = useParams<{ userId: string }>();
+
+    const isEditing = !!userId
+
+    const [formValues, setFormValues] = useState<UserFormValues | null>(null);
+
+    useEffect(() => {
+        if (userId) {                        
+            client.users.getUser(Number(userId)) 
+                .then((response) => {
+                    if (response.success && response.data) {
+                        setFormValues(response.data);
+                    }
+                })
+                .catch((error) => console.error("Error fetching book data:", error));
+        } else {
+            setFormValues({ email: '', name: '', username: '', password: '', role: 'READER' });
+        }
+    }, [userId, client]);
+
     const onSubmit = useCallback(
-        (values: UserFormValues,
-            formik: any) => {
-            console.log(values);
-        },
-        []
-    );
+            async (values: UserFormValues) => {
+                if (isEditing && userId) {
+                    const result = await client.users.updateUser(
+                        Number(userId),
+                        values
+                    );
+    
+                    if (result.success) {
+                        console.log("User updated");
+                        navigate('/users')
+                    }
+                } else {
+                    const result = await client.users.addUser(values);
+    
+                    if (result.success) {
+                        console.log("User added");
+                        navigate('/users')
+                    }
+                }
+            },
+            [client, isEditing, userId]
+        );
 
     const validationSchema = useMemo(() => yup.object().shape({
         email: yup.string().required("Email is required!").email("Invalid email!"),
@@ -24,9 +67,15 @@ function UserForm() {
         role: yup.string().required("Role is required")
     }), []);
 
+    if (!formValues) {
+        return <div>Loading user details</div>;
+    }
+
     return (
         <div>
-            <Formik<UserFormValues> initialValues={{ email: '', name: '', username: '', password: '', role: 'READER' }}
+            <Formik<UserFormValues> 
+                initialValues={formValues}
+                enableReinitialize
                 onSubmit={onSubmit}
                 validationSchema={validationSchema}
                 validateOnChange
@@ -39,6 +88,7 @@ function UserForm() {
                             label="Email:"
                             variant="standard"
                             fullWidth
+                            value={formik.values.email}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.email && !!formik.errors.email}
@@ -49,6 +99,7 @@ function UserForm() {
                             label="Name:"
                             variant="standard"
                             fullWidth
+                            value={formik.values.name}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.name && !!formik.errors.name}
@@ -60,6 +111,7 @@ function UserForm() {
                             label="Username:"
                             variant="standard"
                             fullWidth
+                            value={formik.values.username}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.username && !!formik.errors.username}
@@ -72,6 +124,7 @@ function UserForm() {
                             variant="standard"
                             type="password"
                             fullWidth
+                            value={formik.values.password}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.password && !!formik.errors.password}
@@ -110,7 +163,7 @@ function UserForm() {
                             startIcon={<AddIcon />}
                             type="submit"
                             disabled={!formik.dirty || !formik.isValid}>
-                            Add User
+                            <span>{isEditing? "Edit User" : "Add User"} </span>
                         </Button>
                     </form>
                 )}

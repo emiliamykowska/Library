@@ -5,11 +5,29 @@ import { Formik } from "formik";
 import { useCallback, useMemo, useState } from "react";
 import * as yup from "yup";
 import type { LoanFormValues } from "./LoanFormValues";
+import { LibraryClient } from "../../api/library-client";
+import type { Book } from "../books/Book";
+import { Autocomplete } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function LoanForm() {
     const [isLibrarian] = useState<boolean>(
         localStorage.getItem("role") === "LIBRARIAN"
     );
+
+    const navigate = useNavigate()
+    
+    const client = useMemo(() => new LibraryClient(), []);
+    const [books, setBooks] = useState<Book[]>([]);
+    const searchBooks = async (title: string) => {
+        const result = await client.books.searchBooks(title);
+
+        if (result.success && result.data) {
+            setBooks(result.data);
+        } else {
+            setBooks([]);
+        }
+    };
 
     const getTodayDateString = () => new Date().toISOString().split("T")[0]; // T marks the end of the date 
     const getFutureDateString = () => {
@@ -19,19 +37,17 @@ function LoanForm() {
         return date.toISOString().split("T")[0];
     };
 
-    const onSubmit = useCallback((values: LoanFormValues, formik: any) => {
-        const formattedValues = {
-            bookId: Number(values.bookId),
-
-            ...(isLibrarian && {
-                userId: Number(values.userId),
-                loanDate: values.loanDate,
-                dueDate: values.dueDate,
-            })
-        };
-
-        console.log(formattedValues);
-    }, []);
+    const onSubmit = useCallback(
+            async (values: LoanFormValues) => {
+                    const result = await client.loans.borrowBook(values);
+    
+                    if (result.success) {
+                        console.log("Loan added");
+                        navigate('/loans')
+                    }
+                },            
+            [client]
+        );
 
     const validationSchema = useMemo(() =>
         yup.object({
@@ -64,7 +80,7 @@ function LoanForm() {
             >
                 {(formik) => (
                     <form className="form" onSubmit={formik.handleSubmit}>                        
-                        <TextField
+                        {/* <TextField
                             id="bookId"
                             name="bookId"
                             label="Book ID:"
@@ -77,7 +93,37 @@ function LoanForm() {
                             onBlur={formik.handleBlur}
                             error={formik.touched.bookId && !!formik.errors.bookId}
                             helperText={formik.touched.bookId && formik.errors.bookId}
-                        />
+                        /> */}
+
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Autocomplete
+                                fullWidth
+                                options={books}
+                                getOptionLabel={(option) => option.title}
+                                onInputChange={(_, value) => {
+                                    searchBooks(value);
+                                }}
+                                onChange={(_, selectedBook) => {
+                                    formik.setFieldValue(
+                                        "bookId",
+                                        selectedBook?.bookId ?? 0
+                                    );
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Book title"
+                                        variant="standard"
+                                        fullWidth
+                                    />
+                                )}
+                            />
+                        </Box>
+
                         {isLibrarian && (
                                 <Box sx={{width: "100%", 
                                         display: "flex", 
@@ -131,8 +177,8 @@ function LoanForm() {
                             variant="contained"
                             startIcon={<AddIcon />}
                             type="submit"
+                            sx={{backgroundColor: "#8b6f4f"}}
                             disabled={!formik.dirty || !formik.isValid}
-                            sx={{ mt: 3 }}
                         >
                             Borrow Book
                         </Button>

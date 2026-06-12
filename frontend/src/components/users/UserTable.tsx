@@ -5,25 +5,35 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Button,
   Box,
 } from "@mui/material";
 
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
-import { Link } from "react-router-dom";
 import "../css_files/List.css";
 
 import { useApi } from "../../ApiProvider";
 import { useEffect, useState } from "react";
 import type { User } from "./User";
 
+import { useNavigate } from "react-router-dom";
+
 function UserTable() {
-  const apiClient = useApi();
+  const navigate = useNavigate()
+  const apiClient = useApi();  
 
   const [users, setUsers] = useState<User[]>([]);
+
+  const onDelete = async (userId: number) => {
+        const result = await apiClient.users.deleteUser(userId);
+
+        if (result.success) {
+            setUsers(users =>
+                users.filter(user => user.userId !== userId)
+            );
+        }
+    };
 
   useEffect(() => {
     apiClient.users.getUsers().then((response) => {
@@ -45,17 +55,7 @@ function UserTable() {
           marginBottom: 4,
           paddingX: 2,
         }}
-      >
-        <h2>Users</h2>
-
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          component={Link}
-          to="/users/add"
-        >
-          Add User
-        </Button>
+      >        
       </Box>
 
       <Table>
@@ -75,10 +75,10 @@ function UserTable() {
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
               <TableCell>
-                <IconButton>
+                <IconButton onClick={() => navigate((`/users/edit/${user.userId}`))}>
                   <EditIcon />
                 </IconButton>
-                <IconButton color="error">
+                <IconButton color="error" onClick={() => onDelete?.(user.userId)}>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>

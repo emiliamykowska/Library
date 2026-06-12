@@ -2,21 +2,65 @@ import { Button, TextField } from "@mui/material";
 import "../css_files/Form.css";
 import AddIcon from "@mui/icons-material/Add";
 import { Formik } from "formik";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import * as yup from "yup";
 import type { ReviewFormValues } from "../reviews/ReviewFormValues";
+import { LibraryClient } from "../../api/library-client";
+import { useNavigate, useParams } from "react-router-dom";
 
 function ReviewForm() {
-    const onSubmit = useCallback((values: ReviewFormValues,
-        formik: any) => {
-        const formattedValues = {
-            ...values,
-            bookId: Number(values.bookId),
-            rating: Number(values.rating),
-        };
+    const [isLibrarian] = useState<boolean>(
+        localStorage.getItem("role") === "LIBRARIAN"
+    );
 
-        console.log(formattedValues);
-    }, []);
+    const navigate = useNavigate();
+
+    const client = useMemo(() => 
+        new LibraryClient(), []);
+
+    const { reviewId } = useParams<{ reviewId: string }>();
+
+    const isEditing = !!reviewId
+
+    const [formValues, setFormValues] = useState<ReviewFormValues | null>(null);
+
+    useEffect(() => {
+        if (reviewId) {                        
+            client.reviews.getReview(Number(reviewId)) 
+                .then((response) => {
+                    if (response.success && response.data) {
+                        setFormValues(response.data);
+                    }
+                })
+                .catch((error) => console.error("Error fetching book data:", error));
+        } else {
+            setFormValues({ bookId: 1, rating: 10, comment: '', userId: 1, });
+        }
+    }, [reviewId, client]);
+
+    const onSubmit = useCallback(
+            async (values: ReviewFormValues) => {
+                if (isEditing && reviewId) {
+                    const result = await client.reviews.updateReview(
+                        Number(reviewId),
+                        values
+                    );
+    
+                    if (result.success) {
+                        console.log("Review updated");
+                        navigate('/reviews')
+                    }
+                } else {
+                    const result = await client.reviews.addReview(values);
+    
+                    if (result.success) {
+                        console.log("Review added");
+                        navigate('/reviews')
+                    }
+                }
+            },
+            [client, isEditing, reviewId]
+        );
 
     const validationSchema = useMemo(() =>
         yup.object({
@@ -27,15 +71,23 @@ function ReviewForm() {
                 .min(0, "Min rating is 0")
                 .max(10, "Max rating is 10"),
             comment: yup.string().required("Comment is required"),
+            userId: yup.number().when([], {
+                is: () => isLibrarian,
+                then: (schema) => schema.required("User ID is required").positive("User ID must be positive"),
+                otherwise: (schema) => schema.notRequired()
+            })
         }),
-        []);
+        [isLibrarian]);
+
+    if (!formValues) {
+        return <div>Loading review details</div>;
+    }
 
     return (
         <div>
             <Formik<ReviewFormValues>
-                initialValues={{
-                    bookId: 1, rating: 10, comment: '',
-                }}
+                initialValues={formValues}
+                enableReinitialize
                 onSubmit={onSubmit}
                 validationSchema={validationSchema}
                 validateOnChange
@@ -51,13 +103,32 @@ function ReviewForm() {
                             variant="standard"
                             fullWidth
                             slotProps={{
-                                htmlInput: { min: 0 }
+                                htmlInput: { min: 1 }
                             }}
+                            value={formik.values.bookId}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.bookId && !!formik.errors.bookId}
                             helperText={formik.touched.bookId && formik.errors.bookId}
                         />
+
+                        {isLibrarian && (                            
+                            <TextField
+                                id="userId"
+                                name="userId"
+                                label="User ID:"
+                                type="number"
+                                variant="standard"
+                                fullWidth
+                                slotProps={{ htmlInput: { min: 1 } }}
+                                value={formik.values.userId}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.userId && !!formik.errors.userId}
+                                helperText={formik.touched.userId && formik.errors.userId}
+                            />
+                        )}
+
                         <TextField
                             id="rating"
                             name="rating"
@@ -69,6 +140,7 @@ function ReviewForm() {
                                 htmlInput: { min: 0, max: 10 },
 
                             }}
+                            value={formik.values.rating}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.rating && !!formik.errors.rating}
@@ -81,6 +153,7 @@ function ReviewForm() {
                             multiline
                             variant="standard"
                             fullWidth
+                            value={formik.values.comment}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={formik.touched.comment && !!formik.errors.comment}
@@ -90,9 +163,9 @@ function ReviewForm() {
                             variant="contained"
                             startIcon={<AddIcon />}
                             type="submit"
-                            disabled={!formik.dirty || !formik.isValid}
-                        >
-                            Add Review
+                            sx={{backgroundColor: "#8b6f4f"}}
+                            disabled={!formik.dirty || !formik.isValid}>
+                            <span>{isEditing? "Edit Review" : "Add Review"} </span>
                         </Button>
                     </form>
                 )}

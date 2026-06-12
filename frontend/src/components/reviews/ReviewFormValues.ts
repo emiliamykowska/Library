@@ -3,4 +3,5 @@ export interface ReviewFormValues {
     rating: number;
     comment: string;
     reviewDate?: string;
+    userId: number;
 }

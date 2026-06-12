@@ -103,7 +103,8 @@ function LoginForm({ onAuthChange }: LoginFormProps) {
                             variant="contained"
                             startIcon={<LoginIcon />}
                             type="submit"
-                            disabled={!formik.dirty || !formik.isValid}>
+                            sx={{backgroundColor: "#8b6f4f"}}
+                            disabled={!formik.dirty || !formik.isValid}>                                
                             Login
                         </Button>
                     </form>

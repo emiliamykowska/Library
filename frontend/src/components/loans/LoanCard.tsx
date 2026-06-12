@@ -16,24 +16,25 @@ function LoanCard(
     }: LoanCardProps
 ) {
     return (
-        <GeneralCard>
-            <Typography variant="h5">
-                Book Id: {loan.bookId}
+        <GeneralCard>            
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                {loan.bookTitle}
             </Typography>
-            <Typography variant="h5">
-                Book Title: {loan.bookTitle}
+            <Typography variant="h5" >
+                Book Id: {loan.bookId}
             </Typography>
 
             {isLibrarian && (<Box>
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                {loan.username}
+            </Typography>
                 <Typography variant="h5">
                 User Id: {loan.userId}
             </Typography>
-            <Typography variant="h5">
-                Username: {loan.username}
-            </Typography></Box>
+            </Box>
             )}
 
-            <Typography variant="h6">
+            <Typography>
                 Loan Date: {String(loan.loanDate)}
             </Typography>
             <Typography>
@@ -41,25 +42,16 @@ function LoanCard(
             </Typography>
             <Typography>
                 Return Date: {loan.returnDate !== null ? String(loan.returnDate) : (
-        <>
-            The book was not returned yet
+        <>        
+            <span style={{ color: "#c62828", fontWeight: 600 }}>
+                The book was not returned yet
+            </span>
             <IconButton>
                 <AssignmentReturn />
             </IconButton>
         </>
     )}
             </Typography>
-
-            {isLibrarian && (
-                <Box>
-                    <IconButton>
-                        <EditIcon />
-                    </IconButton>
-                    <IconButton color="error">
-                        <DeleteIcon />
-                    </IconButton>
-                </Box>
-            )}
         </GeneralCard >
     )
 }

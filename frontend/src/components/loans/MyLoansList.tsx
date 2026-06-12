@@ -17,8 +17,10 @@ function MyLoansList() {
                 if (response.success && response.data) {
                     setLoans(response.data)
                 }
-            }
+                
+            }            
             )
+            .catch((error) => console.error("Error fetching loans:", error))
     },
         [apiClient])
 
@@ -27,15 +29,20 @@ function MyLoansList() {
         <div className="list-form">
             <h1>List of Loans</h1>
 
-            {
+            {loans.length > 0 ? (                
                 loans.map((loan) => (
                     <LoanCard
                         key={loan.loanId}
                         loan={loan}
                         isLibrarian={false}
                     />
-                ))
-            }
+                ))            
+            ) : (                   
+                <p>
+                    You haven't loaned any books yet
+                </p>
+            )}
+            
         </div >
     );
 }

@@ -9,6 +9,7 @@ import ReviewList from './components/reviews/ReviewList';
 import BookList from './components/books/BookList';
 import MainPage from './components/MainPage';
 import LoanBorrowForm from './components/loans/LoanBorrowForm';
+import LoanReturnForm from './components/loans/LoanReturnForm';
 import MyLoansList from './components/loans/MyLoansList';
 import AllLoansList from './components/loans/AllLoansList';
 import Navigation from './components/Navigation';
@@ -40,15 +41,17 @@ function App() {
           <Route path="/books" element={<BookList />} />
           <Route path="/books/add" element={<BookForm />} />
           <Route path="/books/edit/:bookId" element={<BookForm />} />
+          <Route path="/books/:bookId/reviews" element={<ReviewList />} />
           <Route path="/reviews" element={<ReviewList />} />
           <Route path="/reviews/add" element={<ReviewForm />} />
-          <Route path="/reviews/edit/:reviewId" element={<ReviewForm />} />
+          <Route path="/reviews/edit/:reviewId" element={<ReviewForm />} />          
           <Route path="/users" element={<UserTable />} />
           <Route path="/users/add" element={<UserForm />} />
           <Route path="/users/edit/:userId" element={<UserForm />} />
           <Route path="/loans/borrow" element={<LoanBorrowForm />} />
           <Route path="/loans/my" element={<MyLoansList />} />
           <Route path="/loans/all" element={<AllLoansList />} />
+          <Route path="/loans/return/:loanId" element={<LoanReturnForm />} /> 
         </Routes>
       
       </ApiProvider>

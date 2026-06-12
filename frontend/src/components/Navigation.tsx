@@ -48,6 +48,10 @@ function Navigation({ token, role }: NavigationProps) {
                   <NavDropdown.Item as={Link} to="/loans/my">My Loans</NavDropdown.Item>
                 )}
                 <NavDropdown.Item as={Link} to="/loans/borrow">Borrow Book</NavDropdown.Item>
+                {isLibrarian &&
+                  <NavDropdown.Item as={Link} to="/loans/return/{id}">Return Book</NavDropdown.Item>
+                }
+                
               </NavDropdown>
             )}
 

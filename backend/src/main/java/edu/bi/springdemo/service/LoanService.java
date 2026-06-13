@@ -162,4 +162,17 @@ public class LoanService {
         }
         loanRepository.saveAll(userLoans);
     }
+
+    @Transactional
+    public void delete(Integer id){
+
+        Loan loanToDelete = loanRepository.findById(id)
+                .orElseThrow(() -> ResourceNotFoundException.create("Loan with that id was not found"));
+
+        if (loanToDelete.getReturnDate() == null){
+            throw NotValidArgumentException.create("Cannot delete loan with not returned book");
+        }
+
+        loanRepository.delete(loanToDelete);
+    }
 }

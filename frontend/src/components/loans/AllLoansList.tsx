@@ -13,6 +13,17 @@ function AllLoansList() {
 
     const [searchQuery, setSearchQuery] = useState<string>("");
 
+    const onDelete = async (loanId: number) => {
+        const result = await apiClient.loans.deleteLoan(loanId);
+
+        if (result.success) {
+            setLoans(loans =>
+                loans.filter(loan => loan.loanId !== loanId)
+            );
+            setSearchQuery("");
+        }
+    };
+
     useEffect(() => {
         apiClient.loans.getLoans()
             .then((response) => {
@@ -47,6 +58,7 @@ function AllLoansList() {
                             key={loan.loanId}
                             loan={loan}
                             isLibrarian={true}
+                            onDelete={onDelete}
                         />
                     ))
                 }

@@ -4,15 +4,17 @@ import { Typography, IconButton, Box } from "@mui/material";
 import AssignmentReturn from "@mui/icons-material/AssignmentReturn";
 import { useApi } from "../../ApiProvider";
 import { useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface LoanCardProps {
     loan: Loan;
     isLibrarian?: boolean;
+    onDelete?: (loanId: number) => void;
 }
 
 
 function LoanCard(
-    { loan, isLibrarian
+    { loan, isLibrarian, onDelete
     }: LoanCardProps
 ) {
     const apiClient = useApi();
@@ -32,16 +34,23 @@ function LoanCard(
     };
 
     return (
-        <GeneralCard>          
-            <Typography variant="h6">
-                Loan Id: {loan.loanId}
-            </Typography>  
+        <GeneralCard>    
+            {isLibrarian && 
+                (<Typography variant="h6">
+                    Loan Id: {loan.loanId}
+                </Typography>  )  
+            }    
+            
             <Typography>
                 {loan.bookTitle}
             </Typography>
-            <Typography variant="h6" >
-                Book Id: {loan.bookId}
-            </Typography>
+
+            {isLibrarian && (
+                <Typography variant="h6" >
+                    Book Id: {loan.bookId}
+                </Typography>
+            )}
+            
 
             {isLibrarian && (<Box>
             <Typography>
@@ -74,6 +83,18 @@ function LoanCard(
                 </>
     )}
             </Typography>
+
+            {isLibrarian && loan.returnDate !== null &&(                        
+                    <IconButton 
+                        title="Delete" 
+                        color="error" 
+                        onClick={() => onDelete?.(loan.loanId)}>
+                        <DeleteIcon />
+                    </IconButton>
+                    
+                    
+                )}
+
         </GeneralCard >
     )
 }

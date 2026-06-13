@@ -102,4 +102,10 @@ public class LoanController {
         }
         return result;
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteLoan(@PathVariable Integer id){
+        loanService.delete(id);
+    }
 }

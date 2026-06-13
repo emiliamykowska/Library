@@ -37,15 +37,23 @@ function ReviewForm() {
             }
         };
 
-    useEffect(() => {
+   useEffect(() => {
         if (reviewId) {                        
-            client.reviews.getReview(Number(reviewId)) 
-                .then((response) => {
+            client.reviews.getReview(Number(reviewId))             
+                .then(async (response) => { 
                     if (response.success && response.data) {
-                        setFormValues(response.data);
+                        const reviewData = response.data;
+                        setFormValues(reviewData);
+
+                        if (reviewData.bookId) {
+                            const bookResponse = await client.books.getBook(reviewData.bookId);
+                            if (bookResponse.success && bookResponse.data) {                                
+                                setBooks([bookResponse.data]);
+                            }
+                        }
                     }
                 })
-                .catch((error) => console.error("Error fetching book data:", error));
+                .catch((error) => console.error("Error fetching review data:", error));
         } else {
             setFormValues({ bookId: 1, rating: 10, comment: '', userId: 1, });
         }
@@ -64,15 +72,28 @@ function ReviewForm() {
                         navigate('/reviews')
                     }
                 } else {
-                    const result = await client.reviews.addReview(values);
+
+                    if (isLibrarian){
+                        const result = await client.reviews.addReviewForUser(Number(values.userId), values);
     
-                    if (result.success) {
-                        console.log("Review added");
-                        navigate('/reviews')
+                        if (result.success) {
+                            console.log("Review added");
+                            navigate('/reviews')
+                        }
                     }
+                    else{
+                        const result = await client.reviews.addReview(values);
+    
+                        if (result.success) {
+                            console.log("Review added");
+                            navigate('/reviews')
+                        }
+                    }
+                
+                    
                 }
             },
-            [client, isEditing, reviewId]
+            [client, isEditing, reviewId, isLibrarian, navigate]
         );
 
     const validationSchema = useMemo(() =>
@@ -116,7 +137,9 @@ function ReviewForm() {
                             <Autocomplete
                                 fullWidth
                                 options={books}
-                                getOptionLabel={(option) => option.title}
+                                getOptionLabel={(option) => option?.title || ""}
+                                value={books.find(books => books.bookId === formik.values.bookId) || null}
+                                isOptionEqualToValue={(option, value) => option.bookId === value.bookId}
                                 onInputChange={(_, value) => {
                                     searchBooks(value);
                                 }}

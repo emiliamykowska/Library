@@ -69,9 +69,12 @@ function UserTable() {
                 <IconButton onClick={() => navigate((`/users/edit/${user.userId}`))}>
                   <EditIcon />
                 </IconButton>
-                <IconButton color="error" onClick={() => onDelete?.(user.userId)}>
-                  <DeleteIcon />
-                </IconButton>
+
+                {user.userId !== 9999 &&
+                  <IconButton color="error" onClick={() => onDelete?.(user.userId)}>
+                    <DeleteIcon />
+                  </IconButton>}
+                
               </TableCell>
             </TableRow>
           ))}

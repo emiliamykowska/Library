@@ -9,7 +9,7 @@ function GeneralCard({ children }: GeneralCardProps) {
     return (
         <Card sx={{
             minWidth: '700px',
-            minHeight: '250px',
+            minHeight: '150px',
             borderRadius: '30px',
             display: 'flex',
             flexDirection: 'column',

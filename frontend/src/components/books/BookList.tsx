@@ -23,6 +23,15 @@ function BookList() {
             )
     },
         [apiClient])
+    
+
+    const onSearch = async (text: string) => {
+        const response = await apiClient.books.searchBooks(text);
+
+        if (response.success && response.data) {
+            setBooks(response.data);
+        }
+    };
 
     const onDelete = async (bookId: number) => {
         const result = await apiClient.books.deleteBook(bookId);
@@ -31,14 +40,6 @@ function BookList() {
             setBooks(books =>
                 books.filter(book => book.bookId !== bookId)
             );
-        }
-    };
-
-    const onSearch = async (text: string) => {
-        const response = await apiClient.books.searchBooks(text);
-
-        if (response.success && response.data) {
-            setBooks(response.data);
         }
     };
 

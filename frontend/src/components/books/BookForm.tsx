@@ -151,7 +151,7 @@ function BookForm() {
                             value={formik.values.year}
                             type="number"
                             slotProps={{
-                                htmlInput: { min: 0 }
+                                htmlInput: { min: 1 }
                             }}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}

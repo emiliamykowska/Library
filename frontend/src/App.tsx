@@ -19,6 +19,9 @@ import ApiProvider from './ApiProvider';
 
 import { useState } from 'react';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
 
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
@@ -30,8 +33,8 @@ function App() {
   };
 
   return (
-
-    <BrowserRouter>
+    <div>
+        <BrowserRouter>
       <ApiProvider>
         <Navigation token={token} role={role}/>
                   
@@ -56,6 +59,11 @@ function App() {
       
       </ApiProvider>
     </BrowserRouter>
+
+    <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} />
+
+    </div>
+    
   );
 
 }

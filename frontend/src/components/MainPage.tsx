@@ -33,13 +33,16 @@ function MainPage() {
         [apiClient])
 
     useEffect(() => {
-        apiClient.users.getUsers()
+        { isLibrarian && 
+            apiClient.users.getUsers()
             .then((response) => {
                 if (response.success && response.data) {
                     setUsers(response.data)
                 }
             }
             )
+        }
+        
     },
         [apiClient])
 
@@ -90,26 +93,30 @@ function MainPage() {
                         <BookCard key={book.bookId} book={book} isLibrarian={isLibrarian} />
                     ))}
             </Box>
+            
 
-            <Button
-                variant="contained"
-                component={Link}
-                to="/books"
-                sx={{backgroundColor: "#8b6f4f"}}      
-            >
-                View All Books
-            </Button>
-
-            {!isLoggedIn && (
+            <Box className="stats-row">
                 <Button
                     variant="contained"
                     component={Link}
-                    to="/login"
-                    sx={{backgroundColor: "#8b6f4f"}}
+                    to="/books"
+                    sx={{backgroundColor: "#8b6f4f"}}      
                 >
-                    LogIn
+                    View All Books
                 </Button>
-            )}
+
+                {!isLoggedIn && (
+                    <Button
+                        variant="contained"
+                        component={Link}
+                        to="/login"
+                        sx={{backgroundColor: "#8b6f4f"}}
+                    >
+                        LogIn
+                    </Button>
+                )}
+            </Box>
+            
 
 
         </Box>

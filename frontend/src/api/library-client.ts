@@ -5,6 +5,7 @@ import { BookClient } from "./book-client";
 import { ReviewClient } from "./review-client";
 import { UserClient } from "./user-client";
 import { LoanClient } from "./loan-client";
+import { toast } from "react-toastify";
 
 export type ClientResponse<T> = {
     success: boolean;
@@ -31,9 +32,37 @@ export class LibraryClient {
                 config.headers['Authorization'] = `Bearer ${token}`;
             }
             return config;
-        }, (error) => {
+        }, (error) => {          
+
             return Promise.reject(error);
         });
+
+        this.client.interceptors.response.use(
+            (response) => {
+                return response
+            },
+            (error) => {
+                if (error.response && error.response.data) {
+                    const errorData = error.response.data;
+                    
+                    if (errorData.message) {
+                        toast.error(errorData.message);
+                    }             
+                    else {                
+                        Object.keys(errorData).forEach((field) => {                        
+                            if (field !== "timestamp") {
+                                toast.error(`${field}: ${errorData[field]}`);
+                            }                     
+                        });
+                    }
+                } else {                
+                    toast.error("Unable to connect to the server");
+                }
+
+                return Promise.reject(error);
+            }
+
+        )
 
         this.books = new BookClient(this.client);
         this.reviews = new ReviewClient(this.client);

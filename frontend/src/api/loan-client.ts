@@ -175,4 +175,28 @@ export class LoanClient {
             }
         }
     }
+
+    public async deleteLoan(loanId: number): Promise<ClientResponse<null>> {
+    
+            try {
+                const response: AxiosResponse<void> = await this.client.delete(
+                    `/loans/${loanId}`
+                );
+    
+                return {
+                    success: true,
+                    data: null,
+                    statusCode: response.status
+                };
+            }
+            catch (error) {
+                const axiosError = error as AxiosError<Error>;
+    
+                return {
+                    success: false,
+                    data: null,
+                    statusCode: axiosError.response?.status || 0
+                };
+            }
+        }
 }

@@ -41,7 +41,8 @@ function LoanCard(
                 </Typography>  )  
             }    
             
-            <Typography>
+ 
+            <Typography variant={isLibrarian ? "body1" : "h6"}>
                 {loan.bookTitle}
             </Typography>
 
